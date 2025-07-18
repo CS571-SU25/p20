@@ -1,85 +1,88 @@
-import React, { useState } from 'react';
-import { Menu, X, MapPin, Star, Calendar, Users } from 'lucide-react';
+import { useEffect, useState } from 'react'
+import { Button, Card, Form } from 'react-bootstrap'
 
-const NavigationBar = ({ currentPage, setCurrentPage, itineraryCount }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default function AboutUs() {
 
-  const navItems = [
-    { id: 'home', label: 'Home', icon: MapPin },
-    { id: 'attractions', label: 'Attractions', icon: Star },
-    { id: 'itinerary', label: `My Itinerary (${itineraryCount})`, icon: Calendar },
-    { id: 'reviews', label: 'Reviews', icon: Users }
-  ];
+    const [thought, setThought] = useState("");
 
-  return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          <button
-            onClick={() => setCurrentPage('home')}
-            className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
-          >
-            NYC Tourist Guide
-          </button>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6">
-            {navItems.map(item => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setCurrentPage(item.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                    currentPage === item.id
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
+    const [comments, setComments] = useState([]);
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+    async function load() {
+        const resp = await fetch("https://cs571api.cs.wisc.edu/rest/su25/bucket/comments", {
+            headers: {
+                "X-CS571-ID": CS571.getBadgerId()
+            }
+        })
+        let data = (await resp.json()).results;
+        data = Object.keys(data).map(k => {
+            return {
+                id: k,
+                comment: data[k].comment,
+                created: new Date(data[k].created)
+            }
+        }).toSorted((c1, c2) => c2.created - c1.created);
+        setComments(data)
+    }
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            {navItems.map(item => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setCurrentPage(item.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-colors ${
-                    currentPage === item.id
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </nav>
-  );
-};
+    async function handlePost(e) {
+        e?.preventDefault();
 
-export default NavigationBar;
+        const resp = await fetch("https://cs571api.cs.wisc.edu/rest/su25/bucket/comments", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CS571-ID": CS571.getBadgerId()
+            },
+            body: JSON.stringify({
+                comment: thought,
+                created: new Date().getTime()
+            })
+        })
+
+        if (resp.ok) {
+            alert("Created comment!")
+            load();
+            setThought("");
+        } else {
+            alert("Something went wrong!")
+        }
+    }
+
+    async function handleDelete(id) {
+        const resp = await fetch("https://cs571api.cs.wisc.edu/rest/su25/bucket/comments?id=" + id, {
+            method: "DELETE",
+            headers: {
+                "X-CS571-ID": CS571.getBadgerId()
+            }
+        })
+
+        if (resp.ok) {
+            alert("Deleted comment!")
+            load();
+        } else {
+            alert("Something went wrong!")
+        }
+    }
+
+    useEffect(() => {
+        load();
+    }, []);
+
+    return <div>
+        <h1>Welcome to BadgerChat Nano!</h1>
+        <Form onSubmit={handlePost}>
+            <Form.Label htmlFor='comment-inp'>Comment</Form.Label>
+            <Form.Control id='comment-inp' value={thought} onChange={(e) => setThought(e.target.value)}></Form.Control>
+            <br />
+            <Button onClick={handlePost}>Submit</Button>
+        </Form>
+        {
+            comments.map(m => <Card key={m.id} style={{ marginTop: "1rem" }}>
+                <p><strong>{m.comment}</strong></p>
+                <p>{m.created.toLocaleString()}</p>
+                <Button variant="danger" onClick={() => handleDelete(m.id)}>Delete</Button>
+            </Card>
+            )
+        }
+    </div>
+}
