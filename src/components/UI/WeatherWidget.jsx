@@ -8,7 +8,10 @@ const WeatherWidget = () => {
 
   useEffect(() => {
     // Your actual OpenWeatherMap API key
-    const API_KEY =  process.env.VITE_WEATHER_API_KEY;
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+console.log("API Key:", API_KEY);
+
+
 
     
     // Weather API Call
