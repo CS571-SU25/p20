@@ -8,7 +8,8 @@ const WeatherWidget = () => {
 
   useEffect(() => {
     // Your actual OpenWeatherMap API key
-    const API_KEY = '0cc4ad0ca717284a94063c6cd06418e4';
+    const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+
     
     // Weather API Call
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=New%20York&appid=${API_KEY}&units=imperial`)
