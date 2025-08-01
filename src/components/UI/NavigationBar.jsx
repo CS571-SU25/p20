@@ -1,84 +1,103 @@
-import React, { useState } from 'react';
-import { Menu, X, MapPin, Star, Calendar, Users } from 'lucide-react';
+import React from 'react';
+import { Navbar, Nav, Container, Badge } from 'react-bootstrap';
+import { MapPin, Star, Calendar, Users } from 'lucide-react';
 
 const NavigationBar = ({ currentPage, setCurrentPage, itineraryCount }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const navItems = [
     { id: 'home', label: 'Home', icon: MapPin },
     { id: 'attractions', label: 'Attractions', icon: Star },
-    { id: 'itinerary', label: `My Itinerary (${itineraryCount})`, icon: Calendar },
+    { id: 'itinerary', label: 'My Itinerary', icon: Calendar },
     { id: 'reviews', label: 'Reviews', icon: Users }
   ];
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          <button
-            onClick={() => setCurrentPage('home')}
-            className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
-          >
-            NYC Tourist Guide
-          </button>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6">
+    <Navbar bg="white" expand="lg" className="shadow-lg border-bottom sticky-top" style={{ zIndex: 1050 }}>
+      <Container fluid className="px-4 px-lg-5">
+        {/* Brand/Logo */}
+        <Navbar.Brand 
+          href="#" 
+          onClick={() => setCurrentPage('home')}
+          className="fw-bold text-primary d-flex align-items-center fs-4 hover-brand"
+          style={{ cursor: 'pointer' }}
+        >
+          <MapPin className="me-2" size={24} />
+          NYC Tourist Guide
+        </Navbar.Brand>
+
+        {/* Mobile Toggle */}
+        <Navbar.Toggle aria-controls="navbar-nav" />
+        
+        {/* Navigation Items */}
+        <Navbar.Collapse id="navbar-nav">
+          <Nav className="ms-auto">
             {navItems.map(item => {
               const Icon = item.icon;
+              const isActive = currentPage === item.id;
+              
               return (
-                <button
+                <Nav.Link 
                   key={item.id}
-                  onClick={() => setCurrentPage(item.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                    currentPage === item.id
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            {navItems.map(item => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
                     setCurrentPage(item.id);
-                    setMobileMenuOpen(false);
                   }}
-                  className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-colors ${
-                    currentPage === item.id
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-gray-100'
+                  className={`d-flex align-items-center px-3 py-2 mx-1 rounded-pill fw-medium position-relative nav-item-custom ${
+                    isActive ? 'bg-primary text-white shadow-sm' : 'text-dark hover-nav-item'
                   }`}
+                  style={{ 
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease-in-out',
+                    textDecoration: 'none'
+                  }}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="me-2" size={18} />
                   {item.label}
-                </button>
+                  {item.id === 'itinerary' && itineraryCount > 0 && (
+                    <Badge 
+                      bg="danger" 
+                      pill 
+                      className="position-absolute top-0 start-100 translate-middle ms-2"
+                      style={{ fontSize: '0.7rem' }}
+                    >
+                      {itineraryCount}
+                    </Badge>
+                  )}
+                </Nav.Link>
               );
             })}
-          </div>
-        )}
-      </div>
-    </nav>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+
+      {/* Custom CSS */}
+      <style jsx>{`
+        .hover-brand:hover {
+          transform: scale(1.02);
+          transition: transform 0.2s ease-in-out;
+        }
+        
+        .nav-item-custom {
+          transition: all 0.2s ease-in-out !important;
+        }
+        
+        .hover-nav-item:hover {
+          background-color: #f8f9fa !important;
+          color: #0d6efd !important;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
+        
+        .navbar {
+          backdrop-filter: blur(10px);
+          background-color: rgba(255, 255, 255, 0.95) !important;
+        }
+        
+        .shadow-lg {
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+      `}</style>
+    </Navbar>
   );
 };
 

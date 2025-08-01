@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { HashRouter, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
 import { attractionsData } from './data/Attractionsdata';
 
 // UI Components
 import NavigationBar from './components/ui/NavigationBar';
-
-// Layout Components
 import Footer from './components/layout/Footer';
 
 // Page Components
@@ -17,153 +16,135 @@ import ReviewsPage from './components/pages/ReviewsPage';
 // Modal Components
 import AttractionDetailModal from './components/attractions/AttractionDetailModal';
 
-// Main App Content Component (inside HashRouter)
+// Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // Get current page from URL hash
+
+  // Routing: determine current page
   const getCurrentPage = () => {
-    const path = location.pathname;
-    if (path === '/' || path === '/home') return 'home';
-    if (path === '/attractions') return 'attractions';
-    if (path === '/itinerary') return 'itinerary';
-    if (path === '/reviews') return 'reviews';
-    return 'home';
+    switch (location.pathname) {
+      case '/':
+      case '/home':
+        return 'home';
+      case '/attractions':
+        return 'attractions';
+      case '/itinerary':
+        return 'itinerary';
+      case '/reviews':
+        return 'reviews';
+      default:
+        return 'home';
+    }
   };
 
   const currentPage = getCurrentPage();
-  
-  // Itinerary state
+
+  // App state
   const [itinerary, setItinerary] = useState([]);
   const [notes, setNotes] = useState({});
   const [itineraryName, setItineraryName] = useState('My NYC Adventure');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  
-  // Search and filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  
-  // Modal state
   const [selectedAttraction, setSelectedAttraction] = useState(null);
 
-  // Navigation function
+  // Page navigation
   const setCurrentPage = (page) => {
-    switch(page) {
-      case 'home':
-        navigate('/');
-        break;
-      case 'attractions':
-        navigate('/attractions');
-        break;
-      case 'itinerary':
-        navigate('/itinerary');
-        break;
-      case 'reviews':
-        navigate('/reviews');
-        break;
-      default:
-        navigate('/');
-    }
+    const paths = {
+      home: '/',
+      attractions: '/attractions',
+      itinerary: '/itinerary',
+      reviews: '/reviews'
+    };
+    navigate(paths[page] || '/');
   };
 
-  // Itinerary management functions
+  // Itinerary actions
   const addToItinerary = (attraction) => {
     if (!itinerary.find(item => item.id === attraction.id)) {
       setItinerary([...itinerary, attraction]);
     }
   };
 
-  const removeFromItinerary = (attractionId) => {
-    setItinerary(itinerary.filter(item => item.id !== attractionId));
+  const removeFromItinerary = (id) => {
+    setItinerary(itinerary.filter(item => item.id !== id));
   };
 
-  const updateNotes = (attractionId, note) => {
-    setNotes(prev => ({ ...prev, [attractionId]: note }));
+  const updateNotes = (id, note) => {
+    setNotes(prev => ({ ...prev, [id]: note }));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation Bar */}
+    <div className="min-vh-100 bg-light text-dark" aria-label="Main NYC Travel App Container">
       <NavigationBar
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         itineraryCount={itinerary.length}
       />
 
-      {/* Main Content - Routes */}
-      <Routes>
-        <Route 
-          path="/" 
-          element={
-            <HomePage
-              attractions={attractionsData}
-              itinerary={itinerary}
-              addToItinerary={addToItinerary}
-              setSelectedAttraction={setSelectedAttraction}
-              setCurrentPage={setCurrentPage}
-            />
-          } 
-        />
-        
-        <Route 
-          path="/home" 
-          element={
-            <HomePage
-              attractions={attractionsData}
-              itinerary={itinerary}
-              addToItinerary={addToItinerary}
-              setSelectedAttraction={setSelectedAttraction}
-              setCurrentPage={setCurrentPage}
-            />
-          } 
-        />
+      <Container fluid className="py-4" role="main">
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <HomePage
+                attractions={attractionsData}
+                itinerary={itinerary}
+                addToItinerary={addToItinerary}
+                setSelectedAttraction={setSelectedAttraction}
+                setCurrentPage={setCurrentPage}
+              />
+            } 
+          />
 
-        <Route 
-          path="/attractions" 
-          element={
-            <AttractionsPage
-              attractions={attractionsData}
-              itinerary={itinerary}
-              addToItinerary={addToItinerary}
-              setSelectedAttraction={setSelectedAttraction}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-            />
-          } 
-        />
+          <Route 
+            path="/attractions" 
+            element={
+              <AttractionsPage
+                attractions={attractionsData}
+                itinerary={itinerary}
+                addToItinerary={addToItinerary}
+                setSelectedAttraction={setSelectedAttraction}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            } 
+          />
 
-        <Route 
-          path="/itinerary" 
-          element={
-            <ItineraryPage
-              itinerary={itinerary}
-              removeFromItinerary={removeFromItinerary}
-              notes={notes}
-              updateNotes={updateNotes}
-              itineraryName={itineraryName}
-              setItineraryName={setItineraryName}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              setCurrentPage={setCurrentPage}
-            />
-          } 
-        />
+          <Route 
+            path="/itinerary" 
+            element={
+              <ItineraryPage
+                itinerary={itinerary}
+                removeFromItinerary={removeFromItinerary}
+                notes={notes}
+                updateNotes={updateNotes}
+                itineraryName={itineraryName}
+                setItineraryName={setItineraryName}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                setCurrentPage={setCurrentPage}
+              />
+            } 
+          />
 
-        <Route 
-          path="/reviews" 
-          element={
-            <ReviewsPage
-              attractions={attractionsData}
-              setSelectedAttraction={setSelectedAttraction}
-            />
-          } 
-        />
-      </Routes>
+          <Route 
+            path="/reviews" 
+            element={
+              <ReviewsPage
+                attractions={attractionsData}
+                setSelectedAttraction={setSelectedAttraction}
+              />
+            } 
+          />
+        </Routes>
+      </Container>
 
-      {/* Attraction Detail Modal */}
       {selectedAttraction && (
         <AttractionDetailModal
           attraction={selectedAttraction}
@@ -173,19 +154,15 @@ const AppContent = () => {
         />
       )}
 
-      {/* Footer */}
       <Footer setCurrentPage={setCurrentPage} />
     </div>
   );
 };
 
-// Main App Component with HashRouter
-const App = () => {
-  return (
-    <HashRouter>
-      <AppContent />
-    </HashRouter>
-  );
-};
+const App = () => (
+  <HashRouter>
+    <AppContent />
+  </HashRouter>
+);
 
 export default App;

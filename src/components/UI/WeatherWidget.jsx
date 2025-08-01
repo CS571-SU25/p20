@@ -10,9 +10,6 @@ const WeatherWidget = () => {
     // Your actual OpenWeatherMap API key
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
-
-
-    
     // Weather API Call
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=New%20York&appid=${API_KEY}&units=imperial`)
       .then(response => {
@@ -78,13 +75,13 @@ const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-blue-400 to-blue-600 text-white p-6 rounded-lg shadow-lg">
-        <div className="animate-pulse">
-          <div className="h-6 bg-blue-300 rounded mb-4 w-32"></div>
-          <div className="h-8 bg-blue-300 rounded mb-2 w-20"></div>
-          <div className="h-4 bg-blue-300 rounded w-24"></div>
+      <div className="card bg-primary text-white p-3 shadow">
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border text-light" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
-        <p className="text-sm text-blue-200 mt-4">Loading NYC weather...</p>
+        <p className="text-center mt-3 mb-0">Loading NYC weather...</p>
       </div>
     );
   }
@@ -93,42 +90,43 @@ const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
     switch(condition.toLowerCase()) {
       case 'clear':
       case 'sunny': 
-        return <Sun className="w-8 h-8 text-yellow-500" />;
+        return <Sun className="text-warning" size={32} />;
       case 'rain':
       case 'drizzle':
-        return <CloudRain className="w-8 h-8 text-blue-300" />;
+        return <CloudRain className="text-info" size={32} />;
       case 'clouds':
       case 'partly cloudy':
       case 'mist':
       case 'haze':
       default: 
-        return <Cloud className="w-8 h-8 text-gray-300" />;
+        return <Cloud className="text-light" size={32} />;
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="d-flex flex-column gap-3">
       {/* Weather Widget */}
-      <div className="bg-gradient-to-br from-blue-400 to-blue-600 text-white p-6 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold mb-4">NYC Weather Today</h3>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="text-3xl font-bold">{weather.temperature}°F</div>
-            <div className="text-blue-100 capitalize">{weather.description || weather.condition}</div>
-          </div>
-          <div className="text-right">
-            {getWeatherIcon(weather.condition)}
-            <div className="text-sm text-blue-100 mt-2">
-              Humidity: {weather.humidity}%<br />
-              Wind: {weather.windSpeed} mph
+      <div className="card bg-primary text-white shadow">
+        <div className="card-body">
+          <h5 className="card-title fw-bold">NYC Weather Today</h5>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <div className="display-6 fw-bold">{weather.temperature}°F</div>
+              <div className="text-light text-capitalize">{weather.description || weather.condition}</div>
+            </div>
+            <div className="text-end">
+              {getWeatherIcon(weather.condition)}
+              <div className="small text-light mt-2">
+                Humidity: {weather.humidity}%<br />
+                Wind: {weather.windSpeed} mph
+              </div>
             </div>
           </div>
-        </div>
-        <div className="border-t border-blue-300 pt-4">
-          <h4 className="text-sm font-semibold mb-2">3-Day Forecast</h4>
-          <div className="space-y-1">
+          <hr className="border-light opacity-50" />
+          <h6 className="fw-semibold mb-2">3-Day Forecast</h6>
+          <div>
             {weather.forecast.map((day, index) => (
-              <div key={index} className="flex justify-between text-sm">
+              <div key={index} className="d-flex justify-content-between small mb-1">
                 <span>{day.day}</span>
                 <span>{day.high}°/{day.low}°</span>
               </div>
@@ -138,34 +136,36 @@ const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
       </div>
 
       {/* NYC Events Widget */}
-      <div className="bg-gradient-to-br from-green-400 to-blue-500 text-white p-6 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold mb-4">NYC Events Today</h3>
-        <div className="space-y-2">
-          {events.length > 0 ? (
-            events.map((event, index) => (
-              <div key={index} className="text-sm flex justify-between">
-                <span>🎭 {event.event_name || `NYC Event ${index + 1}`}</span>
-                <span className="text-green-100">
-                  {event.start_date_time || 'All Day'}
-                </span>
-              </div>
-            ))
-          ) : (
-            <>
-              <div className="text-sm flex justify-between">
-                <span>🎭 Broadway Show</span>
-                <span className="text-green-100">8:00 PM</span>
-              </div>
-              <div className="text-sm flex justify-between">
-                <span>🎨 Art Exhibition Opening</span>
-                <span className="text-green-100">10:00 AM</span>
-              </div>
-              <div className="text-sm flex justify-between">
-                <span>🎵 Central Park Concert</span>
-                <span className="text-green-100">6:00 PM</span>
-              </div>
-            </>
-          )}
+      <div className="card bg-success text-white shadow">
+        <div className="card-body">
+          <h5 className="card-title fw-bold">NYC Events Today</h5>
+          <div>
+            {events.length > 0 ? (
+              events.map((event, index) => (
+                <div key={index} className="d-flex justify-content-between small mb-2">
+                  <span>🎭 {event.event_name || `NYC Event ${index + 1}`}</span>
+                  <span className="text-light">
+                    {event.start_date_time || 'All Day'}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="d-flex justify-content-between small mb-2">
+                  <span>🎭 Broadway Show</span>
+                  <span className="text-light">8:00 PM</span>
+                </div>
+                <div className="d-flex justify-content-between small mb-2">
+                  <span>🎨 Art Exhibition Opening</span>
+                  <span className="text-light">10:00 AM</span>
+                </div>
+                <div className="d-flex justify-content-between small mb-2">
+                  <span>🎵 Central Park Concert</span>
+                  <span className="text-light">6:00 PM</span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
