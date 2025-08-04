@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { attractionsData } from './data/Attractionsdata';
@@ -44,7 +44,7 @@ const AppContent = () => {
 
   const currentPage = getCurrentPage();
 
-  // App state
+  // App state - Initialize with localStorage data if available
   const [itinerary, setItinerary] = useState([]);
   const [notes, setNotes] = useState({});
   const [itineraryName, setItineraryName] = useState('My NYC Adventure');
@@ -52,6 +52,140 @@ const AppContent = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAttraction, setSelectedAttraction] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    console.log('🔄 Loading data from localStorage...');
+    
+    try {
+      // Load itinerary
+      const savedItinerary = localStorage.getItem('nyc-tourist-itinerary');
+      console.log('📋 Raw saved itinerary:', savedItinerary);
+      
+      if (savedItinerary && savedItinerary !== 'null' && savedItinerary !== 'undefined') {
+        const parsedItinerary = JSON.parse(savedItinerary);
+        console.log('📋 Parsed itinerary:', parsedItinerary);
+        
+        if (Array.isArray(parsedItinerary)) {
+          setItinerary(parsedItinerary);
+          console.log('✅ Loaded itinerary from localStorage:', parsedItinerary);
+        }
+      }
+
+      // Load notes
+      const savedNotes = localStorage.getItem('nyc-tourist-notes');
+      console.log('📝 Raw saved notes:', savedNotes);
+      
+      if (savedNotes && savedNotes !== 'null' && savedNotes !== 'undefined') {
+        const parsedNotes = JSON.parse(savedNotes);
+        console.log('📝 Parsed notes:', parsedNotes);
+        
+        if (typeof parsedNotes === 'object' && parsedNotes !== null) {
+          setNotes(parsedNotes);
+          console.log('✅ Loaded notes from localStorage:', parsedNotes);
+        }
+      }
+
+      // Load itinerary name
+      const savedItineraryName = localStorage.getItem('nyc-tourist-itinerary-name');
+      if (savedItineraryName && savedItineraryName !== 'null') {
+        setItineraryName(savedItineraryName);
+        console.log('✅ Loaded itinerary name:', savedItineraryName);
+      }
+
+      // Load selected date
+      const savedDate = localStorage.getItem('nyc-tourist-selected-date');
+      if (savedDate && savedDate !== 'null') {
+        setSelectedDate(savedDate);
+        console.log('✅ Loaded selected date:', savedDate);
+      }
+
+      // Load search preferences
+      const savedSearchTerm = localStorage.getItem('nyc-tourist-search-term');
+      if (savedSearchTerm && savedSearchTerm !== 'null') {
+        setSearchTerm(savedSearchTerm);
+      }
+
+      const savedCategory = localStorage.getItem('nyc-tourist-selected-category');
+      if (savedCategory && savedCategory !== 'null') {
+        setSelectedCategory(savedCategory);
+      }
+
+      // Mark as initialized after loading
+      setIsInitialized(true);
+      console.log('✅ Initialization complete');
+
+    } catch (error) {
+      console.error('❌ Error loading data from localStorage:', error);
+      setIsInitialized(true); // Still mark as initialized even on error
+    }
+  }, []);
+
+  // Save itinerary to localStorage whenever it changes (but only after initialization)
+  useEffect(() => {
+    if (!isInitialized) {
+      console.log('⏳ Skipping save - not yet initialized');
+      return;
+    }
+    
+    try {
+      localStorage.setItem('nyc-tourist-itinerary', JSON.stringify(itinerary));
+      console.log('💾 Saved itinerary to localStorage:', itinerary);
+    } catch (error) {
+      console.error('❌ Error saving itinerary to localStorage:', error);
+    }
+  }, [itinerary, isInitialized]);
+
+  // Save notes to localStorage whenever they change (but only after initialization)
+  useEffect(() => {
+    if (!isInitialized) {
+      console.log('⏳ Skipping notes save - not yet initialized');
+      return;
+    }
+    
+    try {
+      localStorage.setItem('nyc-tourist-notes', JSON.stringify(notes));
+      console.log('💾 Saved notes to localStorage:', notes);
+    } catch (error) {
+      console.error('❌ Error saving notes to localStorage:', error);
+    }
+  }, [notes, isInitialized]);
+
+  // Save itinerary name to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('nyc-tourist-itinerary-name', itineraryName);
+    } catch (error) {
+      console.error('Error saving itinerary name to localStorage:', error);
+    }
+  }, [itineraryName]);
+
+  // Save selected date to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('nyc-tourist-selected-date', selectedDate);
+    } catch (error) {
+      console.error('Error saving selected date to localStorage:', error);
+    }
+  }, [selectedDate]);
+
+  // Save search preferences to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('nyc-tourist-search-term', searchTerm);
+    } catch (error) {
+      console.error('Error saving search term to localStorage:', error);
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('nyc-tourist-selected-category', selectedCategory);
+    } catch (error) {
+      console.error('Error saving selected category to localStorage:', error);
+    }
+  }, [selectedCategory]);
 
   // Page navigation
   const setCurrentPage = (page) => {

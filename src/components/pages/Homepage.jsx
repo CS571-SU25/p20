@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Card, Button, Badge, ProgressBar } from 'react-bootstrap';
-import { Star, StarFill, Clock, GeoAlt, ArrowRight, Calendar, GraphUp, Award, Thermometer, People } from 'react-bootstrap-icons';
+import { Star, StarFill, Clock, GeoAlt, ArrowRight, Calendar, GraphUp, People, Award, Thermometer, Camera, Building, Globe } from 'react-bootstrap-icons';
 
 // Rating Component
 const RatingDisplay = ({ rating, showValue = true, size = 16 }) => {
@@ -22,11 +22,11 @@ const RatingDisplay = ({ rating, showValue = true, size = 16 }) => {
 };
 
 // Enhanced Stats Card Component
-const StatCard = ({ icon, value, label, color = "primary", trend, subtitle }) => (
+const StatCard = ({ icon, value, label, color = "primary", trend, subtitle, progress }) => (
   <Card 
-    className="border-0 h-100 shadow-sm" 
+    className="border-0 h-100 shadow-sm position-relative overflow-hidden" 
     style={{ 
-      borderRadius: '20px', 
+      borderRadius: '20px',
       background: `linear-gradient(135deg, var(--bs-${color}) 0%, var(--bs-${color}) 100%)`, 
       color: 'white',
       transition: 'transform 0.3s ease, box-shadow 0.3s ease'
@@ -40,20 +40,45 @@ const StatCard = ({ icon, value, label, color = "primary", trend, subtitle }) =>
       e.currentTarget.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
     }}
   >
-    <Card.Body className="p-4 text-center">
-      <div className="mb-3" style={{ fontSize: '2.5rem', opacity: 0.9 }}>
-        {icon}
+    <Card.Body className="p-4">
+      <div className="d-flex align-items-center justify-content-between mb-3">
+        <div style={{ fontSize: '2.5rem', opacity: 0.9 }}>
+          {icon}
+        </div>
+        {trend && (
+          <div className="small d-flex align-items-center opacity-80">
+            <GraphUp size={14} className="me-1" />
+            <span className="fw-semibold">{trend}</span>
+          </div>
+        )}
       </div>
       <div className="h2 fw-bold mb-1">{value}</div>
       <div className="small opacity-90 mb-2">{label}</div>
       {subtitle && <div className="small opacity-75">{subtitle}</div>}
-      {trend && (
-        <div className="mt-3 small d-flex align-items-center justify-content-center">
-          <GraphUp size={14} className="me-1" />
-          <span className="fw-semibold">{trend}</span>
+      {progress && (
+        <div className="mt-3">
+          <ProgressBar 
+            now={progress} 
+            variant="light" 
+            style={{ height: '4px', backgroundColor: 'rgba(255,255,255,0.3)' }}
+          />
         </div>
       )}
     </Card.Body>
+    
+    {/* Decorative background pattern */}
+    <div 
+      className="position-absolute"
+      style={{
+        top: '-20px',
+        right: '-20px',
+        width: '80px',
+        height: '80px',
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.1)',
+        transform: 'rotate(45deg)'
+      }}
+    />
   </Card>
 );
 
@@ -74,7 +99,8 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
       style={{ 
         borderRadius: '20px',
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        overflow: 'hidden'
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
@@ -104,7 +130,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
         #{rank}
       </div>
 
-      <div className="position-relative overflow-hidden" style={{ height: '240px', borderRadius: '20px 20px 0 0' }}>
+      <div className="position-relative overflow-hidden" style={{ height: '280px' }}>
         <img
           src={attraction.image}
           alt={`${attraction.name} - Top rated ${attraction.category.toLowerCase()} attraction in NYC`}
@@ -121,20 +147,21 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
           }}
         />
         
-        {/* Gradient Overlay */}
+        {/* Enhanced Gradient Overlay */}
         <div 
           className="position-absolute w-100 h-100"
           style={{
             top: 0,
             left: 0,
-            background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(0,0,0,0.7) 100%)'
+            background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(0,0,0,0.8) 100%)'
           }}
         />
 
+        {/* Multiple overlays for visual depth */}
         <Badge 
           className="position-absolute"
           style={{ 
-            bottom: '15px',
+            bottom: '60px',
             left: '15px',
             backgroundColor: 'rgba(255,255,255,0.95)', 
             color: '#333',
@@ -145,6 +172,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
             backdropFilter: 'blur(10px)'
           }}
         >
+          <GeoAlt size={12} className="me-1" />
           {attraction.category}
         </Badge>
         
@@ -152,28 +180,23 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
           className="position-absolute d-flex align-items-center"
           style={{
             bottom: '15px',
-            right: '15px',
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            borderRadius: '20px',
-            padding: '6px 12px',
-            backdropFilter: 'blur(10px)'
+            left: '15px',
+            color: 'white'
           }}
         >
           <Star className="text-warning me-1" size={16} fill="currentColor" />
-          <span className="fw-bold text-dark">{attraction.rating}</span>
+          <span className="fw-bold">{attraction.rating}</span>
+          <span className="mx-2 opacity-75">•</span>
+          <Clock size={14} className="me-1" />
+          <span className="small">{attraction.duration}</span>
         </div>
+
+        {/* Popularity indicator removed */}
       </div>
       
       <Card.Body className="p-4 d-flex flex-column">
         <div className="mb-3">
           <h5 className="fw-bold text-dark mb-2 lh-sm">{attraction.name}</h5>
-          
-          <div className="d-flex align-items-center text-muted mb-3 small">
-            <Clock size={14} className="me-2" />
-            <span className="me-3">{attraction.duration}</span>
-            <GeoAlt size={14} className="me-2" />
-            <span>Manhattan</span>
-          </div>
           
           <p className="text-muted small mb-0" style={{ 
             display: '-webkit-box',
@@ -199,7 +222,8 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
                 transition: 'all 0.3s ease'
               }}
             >
-              Learn More
+              <Camera size={14} className="me-2" />
+              Explore
             </Button>
             <Button
               variant={isInItinerary ? "danger" : "primary"}
@@ -208,7 +232,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
               className="fw-bold d-flex align-items-center justify-content-center"
               style={{ 
                 borderRadius: '10px',
-                minWidth: '44px',
+                minWidth: '50px',
                 transition: 'all 0.3s ease'
               }}
             >
@@ -224,7 +248,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
 // Enhanced Weather Widget
 const WeatherWidget = () => (
   <Card 
-    className="border-0 text-white h-100 shadow-sm" 
+    className="border-0 text-white h-100 shadow-sm position-relative overflow-hidden" 
     style={{ 
       borderRadius: '20px',
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -237,7 +261,21 @@ const WeatherWidget = () => (
       e.currentTarget.style.transform = 'translateY(0)';
     }}
   >
-    <Card.Body className="p-4">
+    {/* Background pattern */}
+    <div 
+      className="position-absolute"
+      style={{
+        top: '-50px',
+        right: '-50px',
+        width: '150px',
+        height: '150px',
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.1)',
+        transform: 'rotate(45deg)'
+      }}
+    />
+    
+    <Card.Body className="p-4 position-relative">
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
           <h6 className="mb-2 opacity-90 d-flex align-items-center">
@@ -247,17 +285,21 @@ const WeatherWidget = () => (
           <div className="h1 fw-bold mb-0">72°F</div>
           <p className="mb-0 opacity-90">Partly Cloudy</p>
         </div>
-        <div style={{ fontSize: '3rem', opacity: 0.8 }}>☀️</div>
+        <div style={{ fontSize: '3.5rem', opacity: 0.8 }}>☀️</div>
       </div>
       
       <div className="row g-3 mb-4 small">
-        <div className="col-6 text-center">
+        <div className="col-4 text-center">
           <div className="opacity-80">Humidity</div>
           <div className="fw-bold">65%</div>
         </div>
-        <div className="col-6 text-center">
+        <div className="col-4 text-center">
           <div className="opacity-80">Wind</div>
           <div className="fw-bold">8 mph</div>
+        </div>
+        <div className="col-4 text-center">
+          <div className="opacity-80">UV</div>
+          <div className="fw-bold">6</div>
         </div>
       </div>
       
@@ -282,10 +324,227 @@ const WeatherWidget = () => (
   </Card>
 );
 
-// NYC Events Widget
+// NYC Travel Tips Card
+const TravelTipsCard = () => (
+  <Card className="border-0 shadow-sm h-100" style={{ borderRadius: '20px' }}>
+    <Card.Header 
+      className="border-0 bg-transparent pt-4 pb-2"
+      style={{ borderRadius: '20px 20px 0 0' }}
+    >
+      <h5 className="fw-bold text-dark mb-0 d-flex align-items-center">
+        <Award className="me-2 text-warning" size={20} />
+        Travel Tips
+      </h5>
+    </Card.Header>
+    <Card.Body className="pt-2">
+      <div className="mb-4">
+        <div className="d-flex align-items-start mb-3">
+          <div 
+            className="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3"
+            style={{ width: '36px', height: '36px', minWidth: '36px' }}
+          >
+            <Clock className="text-white" size={16} />
+          </div>
+          <div>
+            <div className="fw-semibold text-dark mb-1">Best Times to Visit</div>
+            <p className="small text-muted mb-0">Early morning (8-10 AM) for popular attractions, avoid 12-3 PM crowds</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="mb-4">
+        <div className="d-flex align-items-start mb-3">
+          <div 
+            className="rounded-circle bg-success d-flex align-items-center justify-content-center me-3"
+            style={{ width: '36px', height: '36px', minWidth: '36px' }}
+          >
+            <People className="text-white" size={16} />
+          </div>
+          <div>
+            <div className="fw-semibold text-dark mb-1">Transportation</div>
+            <p className="small text-muted mb-0">MetroCard for subway/bus. Walking between nearby attractions saves time</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="mb-4">
+        <div className="d-flex align-items-start mb-3">
+          <div 
+            className="rounded-circle bg-warning d-flex align-items-center justify-content-center me-3"
+            style={{ width: '36px', height: '36px', minWidth: '36px' }}
+          >
+            <Globe className="text-white" size={16} />
+          </div>
+          <div>
+            <div className="fw-semibold text-dark mb-1">Local Insights</div>
+            <p className="small text-muted mb-0">Many museums offer "pay-what-you-wish" hours for NY residents</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="d-flex align-items-start mb-3">
+          <div 
+            className="rounded-circle bg-info d-flex align-items-center justify-content-center me-3"
+            style={{ width: '36px', height: '36px', minWidth: '36px' }}
+          >
+            <Building className="text-white" size={16} />
+          </div>
+          <div>
+            <div className="fw-semibold text-dark mb-1">Book Ahead</div>
+            <p className="small text-muted mb-0">Reserve tickets for Empire State Building, Statue of Liberty in advance</p>
+          </div>
+        </div>
+      </div>
+    </Card.Body>
+  </Card>
+);
+
+// Popular Neighborhoods Section
+const PopularNeighborhoodsSection = ({ setCurrentPage }) => {
+  const neighborhoods = [
+    { name: 'Times Square', emoji: '🎭', description: 'Theater District & Broadway', attractions: 12 },
+    { name: 'Central Park', emoji: '🌳', description: 'Urban Oasis & Recreation', attractions: 8 },
+    { name: 'Brooklyn', emoji: '🌉', description: 'Bridge Views & Culture', attractions: 15 },
+    { name: 'Financial District', emoji: '🏛️', description: 'Historic & Business Hub', attractions: 9 },
+    { name: 'Greenwich Village', emoji: '🎨', description: 'Bohemian & Artistic', attractions: 11 },
+    { name: 'Chinatown', emoji: '🏮', description: 'Cultural Experience', attractions: 7 }
+  ];
+
+  return (
+    <div className="mb-5">
+      <div className="text-center mb-4">
+        <h2 className="h2 fw-bold text-dark mb-2">Explore by Neighborhood</h2>
+        <p className="text-muted fs-5">Discover NYC's unique districts and their character</p>
+      </div>
+      
+      <Row className="g-3">
+        {neighborhoods.map((neighborhood, index) => (
+          <Col key={neighborhood.name} xs={6} md={4} lg={2}>
+            <Card 
+              className="border-0 shadow-sm h-100 text-center"
+              style={{ 
+                borderRadius: '16px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+              }}
+              onClick={() => setCurrentPage('attractions')}
+            >
+              <Card.Body className="p-3">
+                <div className="mb-2" style={{ fontSize: '2.5rem' }}>{neighborhood.emoji}</div>
+                <h6 className="fw-bold text-dark mb-1">{neighborhood.name}</h6>
+                <div className="small text-muted mb-2">{neighborhood.description}</div>
+                <div className="small">
+                  <Badge bg="primary" className="small">
+                    {neighborhood.attractions} spots
+                  </Badge>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </div>
+  );
+};
+
+// NYC Facts Section with visual elements
+const NYCFactsSection = () => (
+  <Card className="border-0 shadow-sm position-relative overflow-hidden" style={{ borderRadius: '20px' }}>
+    {/* Background decoration */}
+    <div 
+      className="position-absolute"
+      style={{
+        top: '-100px',
+        right: '-100px',
+        width: '200px',
+        height: '200px',
+        borderRadius: '50%',
+        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)'
+      }}
+    />
+    
+    <Card.Body className="p-5 position-relative">
+      <div className="text-center mb-4">
+        <h4 className="fw-bold text-dark mb-2 d-flex align-items-center justify-content-center">
+          <People className="me-2 text-primary" size={24} />
+          NYC by the Numbers
+        </h4>
+        <p className="text-muted">The city that never sleeps in statistics</p>
+      </div>
+      
+      <Row className="g-4">
+        <Col md={3} className="text-center">
+          <div className="mb-3">
+            <div className="h1 fw-bold text-primary mb-1">8.3M</div>
+            <div className="h6 text-muted mb-2">Population</div>
+            <ProgressBar now={85} variant="primary" style={{ height: '4px' }} />
+          </div>
+        </Col>
+        <Col md={3} className="text-center">
+          <div className="mb-3">
+            <div className="h1 fw-bold text-success mb-1">65M</div>
+            <div className="h6 text-muted mb-2">Annual Visitors</div>
+            <ProgressBar now={90} variant="success" style={{ height: '4px' }} />
+          </div>
+        </Col>
+        <Col md={3} className="text-center">
+          <div className="mb-3">
+            <div className="h1 fw-bold text-warning mb-1">500+</div>
+            <div className="h6 text-muted mb-2">Museums</div>
+            <ProgressBar now={75} variant="warning" style={{ height: '4px' }} />
+          </div>
+        </Col>
+        <Col md={3} className="text-center">
+          <div className="mb-3">
+            <div className="h1 fw-bold text-info mb-1">1,700</div>
+            <div className="h6 text-muted mb-2">Parks</div>
+            <ProgressBar now={80} variant="info" style={{ height: '4px' }} />
+          </div>
+        </Col>
+      </Row>
+      
+      <Row className="mt-4 pt-4 border-top">
+        <Col md={6}>
+          <div className="d-flex align-items-center mb-3">
+            <div className="bg-primary rounded-circle p-2 me-3">
+              <Building className="text-white" size={16} />
+            </div>
+            <div>
+              <div className="fw-semibold">World's Financial Capital</div>
+              <small className="text-muted">Home to NYSE and major banks</small>
+            </div>
+          </div>
+        </Col>
+        <Col md={6}>
+          <div className="d-flex align-items-center mb-3">
+            <div className="bg-success rounded-circle p-2 me-3">
+              <Globe className="text-white" size={16} />
+            </div>
+            <div>
+              <div className="fw-semibold">Cultural Melting Pot</div>
+              <small className="text-muted">200+ languages spoken daily</small>
+            </div>
+          </div>
+        </Col>
+      </Row>
+    </Card.Body>
+  </Card>
+);
+
+//   Events Widget
 const NYCEventsWidget = () => (
   <Card 
-    className="border-0 text-white h-100 shadow-sm" 
+    className="border-0 text-white h-100 shadow-sm position-relative overflow-hidden" 
     style={{ 
       borderRadius: '20px',
       background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
@@ -298,7 +557,21 @@ const NYCEventsWidget = () => (
       e.currentTarget.style.transform = 'translateY(0)';
     }}
   >
-    <Card.Body className="p-4">
+    {/* Background pattern */}
+    <div 
+      className="position-absolute"
+      style={{
+        top: '-50px',
+        right: '-50px',
+        width: '150px',
+        height: '150px',
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.1)',
+        transform: 'rotate(45deg)'
+      }}
+    />
+    
+    <Card.Body className="p-4 position-relative">
       <h5 className="fw-bold mb-4 d-flex align-items-center">
         <Calendar className="me-2" size={20} />
         Today's Events
@@ -337,112 +610,6 @@ const NYCEventsWidget = () => (
   </Card>
 );
 
-// Enhanced Tips Card
-const TipsCard = () => (
-  <Card className="border-0 shadow-sm h-100" style={{ borderRadius: '20px' }}>
-    <Card.Header 
-      className="border-0 bg-transparent pt-4 pb-2"
-      style={{ borderRadius: '20px 20px 0 0' }}
-    >
-      <h5 className="fw-bold text-dark mb-0 d-flex align-items-center">
-        <Award className="me-2 text-warning" size={20} />
-        Insider Tips
-      </h5>
-    </Card.Header>
-    <Card.Body className="pt-2">
-      <div className="mb-4">
-        <div className="d-flex align-items-center mb-2">
-          <div 
-            className="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3"
-            style={{ width: '32px', height: '32px', minWidth: '32px' }}
-          >
-            <span className="text-white small fw-bold">1</span>
-          </div>
-          <div>
-            <div className="fw-semibold text-dark">🚇 Use Public Transit</div>
-            <p className="small text-muted mb-0">MetroCard is your best friend for getting around efficiently</p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="mb-4">
-        <div className="d-flex align-items-center mb-2">
-          <div 
-            className="rounded-circle bg-success d-flex align-items-center justify-content-center me-3"
-            style={{ width: '32px', height: '32px', minWidth: '32px' }}
-          >
-            <span className="text-white small fw-bold">2</span>
-          </div>
-          <div>
-            <div className="fw-semibold text-dark">🎫 Book in Advance</div>
-            <p className="small text-muted mb-0">Popular attractions sell out - reserve your tickets online</p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="mb-4">
-        <div className="d-flex align-items-center mb-2">
-          <div 
-            className="rounded-circle bg-warning d-flex align-items-center justify-content-center me-3"
-            style={{ width: '32px', height: '32px', minWidth: '32px' }}
-          >
-            <span className="text-white small fw-bold">3</span>
-          </div>
-          <div>
-            <div className="fw-semibold text-dark">⏰ Start Early</div>
-            <p className="small text-muted mb-0">Beat the crowds by visiting popular spots in the morning</p>
-          </div>
-        </div>
-      </div>
-      
-      <div>
-        <div className="d-flex align-items-center mb-2">
-          <div 
-            className="rounded-circle bg-info d-flex align-items-center justify-content-center me-3"
-            style={{ width: '32px', height: '32px', minWidth: '32px' }}
-          >
-            <span className="text-white small fw-bold">4</span>
-          </div>
-          <div>
-            <div className="fw-semibold text-dark">🍕 Try Local Food</div>
-            <p className="small text-muted mb-0">Authentic NYC pizza and bagels from neighborhood spots</p>
-          </div>
-        </div>
-      </div>
-    </Card.Body>
-  </Card>
-);
-
-// New NYC Facts Section  
-const NYCFactsSection = () => (
-  <Card className="border-0 shadow-sm" style={{ borderRadius: '20px' }}>
-    <Card.Body className="p-4">
-      <h4 className="fw-bold text-dark mb-4 d-flex align-items-center">
-        <People className="me-2 text-primary" size={24} />
-        Did You Know?
-      </h4>
-      <Row className="g-4">
-        <Col md={3} className="text-center">
-          <div className="h2 fw-bold text-primary mb-1">8.3M</div>
-          <small className="text-muted">NYC Population</small>
-        </Col>
-        <Col md={3} className="text-center">
-          <div className="h2 fw-bold text-success mb-1">65M</div>
-          <small className="text-muted">Annual Visitors</small>
-        </Col>
-        <Col md={3} className="text-center">
-          <div className="h2 fw-bold text-warning mb-1">500+</div>
-          <small className="text-muted">Museums & Galleries</small>
-        </Col>
-        <Col md={3} className="text-center">
-          <div className="h2 fw-bold text-info mb-1">1,700</div>
-          <small className="text-muted">Parks & Playgrounds</small>
-        </Col>
-      </Row>
-    </Card.Body>
-  </Card>
-);
-
 const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary, setSelectedAttraction, setCurrentPage }) => {
   const featuredAttractions = attractions
     .sort((a, b) => b.rating - a.rating)
@@ -463,14 +630,15 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Background Pattern */}
+        {/* Animated Background Pattern */}
         <div 
           className="position-absolute w-100 h-100"
           style={{
             top: 0,
             left: 0,
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            opacity: 0.3
+            opacity: 0.3,
+            animation: 'float 6s ease-in-out infinite'
           }}
         />
         
@@ -496,6 +664,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                     transition: 'all 0.3s ease'
                   }}
                 >
+                  <Camera className="me-2" size={20} />
                   Explore Attractions
                   <ArrowRight className="ms-2" size={20} />
                 </Button>
@@ -511,6 +680,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                     borderWidth: '2px'
                   }}
                 >
+                  <Calendar className="me-2" size={20} />
                   My Itinerary ({itinerary.length})
                 </Button>
               </div>
@@ -518,7 +688,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
             <Col lg={5} className="text-center">
               <div className="position-relative">
                 <div 
-                  className="rounded-circle mx-auto mb-4"
+                  className="rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center"
                   style={{
                     width: '300px',
                     height: '300px',
@@ -527,11 +697,9 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                     border: '2px solid rgba(255,255,255,0.2)'
                   }}
                 >
-                  <div className="d-flex align-items-center justify-content-center h-100">
-                    <div className="text-center">
-                      <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🗽</div>
-                      <div className="h4">NYC Awaits You</div>
-                    </div>
+                  <div className="text-center">
+                    <div className="h4">NYC Awaits You</div>
+                    <div className="small opacity-75">Join millions of visitors</div>
                   </div>
                 </div>
               </div>
@@ -551,6 +719,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
               subtitle="Handpicked experiences"
               color="primary"
               trend="+12% this month"
+              progress={85}
             />
           </Col>
           <Col md={3}>
@@ -561,6 +730,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
               subtitle="Based on reviews"
               color="warning"
               trend="Highly rated"
+              progress={92}
             />
           </Col>
           <Col md={3}>
@@ -571,6 +741,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
               subtitle="Ready to explore"
               color="success"
               trend={itinerary.length > 0 ? "Looking good!" : "Start planning"}
+              progress={itinerary.length * 20}
             />
           </Col>
           <Col md={3}>
@@ -581,6 +752,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
               subtitle="Estimated duration"
               color="info"
               trend={totalTime > 0 ? "Well planned" : "Add attractions"}
+              progress={Math.min(totalTime * 10, 100)}
             />
           </Col>
         </Row>
@@ -622,6 +794,9 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
               </Row>
             </div>
 
+            {/* Popular Neighborhoods */}
+            <PopularNeighborhoodsSection setCurrentPage={setCurrentPage} />
+
             {/* NYC Facts */}
             <NYCFactsSection />
           </Col>
@@ -631,14 +806,19 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
             <div className="sticky-top d-flex flex-column gap-4" style={{ top: '120px' }}>
               <WeatherWidget />
               <NYCEventsWidget />
-              <TipsCard />
+              <TravelTipsCard />
             </div>
           </Col>
         </Row>
       </Container>
       
-      {/* Bottom spacing */}
-      <div style={{ height: '80px' }} />
+      {/* Add CSS animations */}
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+      `}</style>
     </div>
   );
 };
