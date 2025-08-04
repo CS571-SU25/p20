@@ -1,5 +1,6 @@
 import React from 'react';
-import { X, Clock, MapPin, ExternalLink } from 'lucide-react';
+import { Modal, Button, Row, Col, Badge, Card } from 'react-bootstrap';
+import { Clock, GeoAlt, BoxArrowUpRight } from 'react-bootstrap-icons';
 import RatingDisplay from '../UI/RatingDisplay';
 import UserReview from '../UI/UserReview';
 
@@ -7,103 +8,148 @@ const AttractionDetailModal = ({ attraction, onClose, onAddToItinerary, isInItin
   if (!attraction) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="relative">
+    <Modal 
+      show={!!attraction} 
+      onHide={onClose} 
+      size="xl" 
+      centered
+      aria-labelledby="attraction-modal-title"
+    >
+      <Modal.Header closeButton className="border-0 pb-0">
+        <Modal.Title id="attraction-modal-title" className="h3 fw-bold text-dark">
+          {attraction.name}
+        </Modal.Title>
+      </Modal.Header>
+      
+      <Modal.Body className="p-0">
+        {/* Hero Image */}
+        <div className="position-relative">
           <img
             src={attraction.image}
-            alt={attraction.name}
-            className="w-full h-64 object-cover"
+            alt={`Detailed view of ${attraction.name}`}
+            className="w-100"
+            style={{ height: '300px', objectFit: 'cover' }}
           />
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors"
+          <Badge 
+            bg="primary" 
+            className="position-absolute top-0 start-0 m-3 fs-6 px-3 py-2"
           >
-            <X className="w-5 h-5" />
-          </button>
+            {attraction.category}
+          </Badge>
         </div>
         
-        <div className="p-6">
-          <div className="flex justify-between items-start mb-4">
-            <h2 className="text-3xl font-bold text-gray-800">{attraction.name}</h2>
-            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-              {attraction.category}
-            </span>
+        {/* Content */}
+        <div className="p-4">
+          {/* Rating and Duration */}
+          <div className="d-flex align-items-center mb-3">
+            <RatingDisplay rating={attraction.rating} size={20} />
+            <span className="text-muted mx-3">•</span>
+            <Clock size={18} className="text-muted me-2" />
+            <span className="text-muted">Duration: {attraction.duration}</span>
           </div>
           
-          <div className="flex items-center gap-4 mb-4">
-            <RatingDisplay rating={attraction.rating} />
-            <span className="text-gray-400">•</span>
-            <Clock className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-600">{attraction.duration}</span>
-          </div>
+          {/* Description */}
+          <p className="lead text-dark mb-4" style={{ lineHeight: '1.6' }}>
+            {attraction.description}
+          </p>
           
-          <p className="text-gray-700 mb-6 text-lg leading-relaxed">{attraction.description}</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Details</h3>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Clock className="w-5 h-5 text-gray-400 mr-2" />
-                  <span className="text-gray-700">{attraction.hours}</span>
-                </div>
-                <div className="flex items-center">
-                  <MapPin className="w-5 h-5 text-gray-400 mr-2" />
-                  <span className="text-gray-700">
-                    {attraction.location.lat.toFixed(4)}, {attraction.location.lng.toFixed(4)}
-                  </span>
-                </div>
-              </div>
-            </div>
+          {/* Details and Tips */}
+          <Row className="mb-4">
+            <Col md={6}>
+              <Card className="border-0 bg-light h-100">
+                <Card.Body>
+                  <h5 className="fw-bold mb-3 text-primary">
+                    <Clock size={20} className="me-2" />
+                    Details
+                  </h5>
+                  <div className="mb-3">
+                    <div className="d-flex align-items-center mb-2">
+                      <Clock size={16} className="text-muted me-2" />
+                      <strong className="me-2">Hours:</strong>
+                      <span className="text-dark">{attraction.hours}</span>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <GeoAlt size={16} className="text-muted me-2" />
+                      <strong className="me-2">Location:</strong>
+                      <span className="text-dark">
+                        {attraction.location.lat.toFixed(4)}, {attraction.location.lng.toFixed(4)}
+                      </span>
+                    </div>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
             
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Local Tips</h3>
-              <ul className="space-y-1">
-                {attraction.tips.map((tip, index) => (
-                  <li key={index} className="text-gray-700 text-sm flex items-start">
-                    <span className="text-blue-600 mr-2 mt-1">•</span>
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+            <Col md={6}>
+              <Card className="border-0 bg-light h-100">
+                <Card.Body>
+                  <h5 className="fw-bold mb-3 text-success">
+                    💡 Local Tips
+                  </h5>
+                  <ul className="list-unstyled mb-0">
+                    {attraction.tips.map((tip, index) => (
+                      <li key={index} className="mb-2 d-flex align-items-start">
+                        <span className="text-primary me-2 fw-bold">•</span>
+                        <span className="text-dark small">{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
           
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">User Reviews</h3>
-            <div className="space-y-3">
+          {/* Reviews Section */}
+          <div className="mb-4">
+            <h5 className="fw-bold mb-3 text-dark">
+              ⭐ Visitor Reviews
+            </h5>
+            <Row>
               {attraction.reviews.map((review, index) => (
-                <UserReview key={index} review={review} />
+                <Col key={index} md={6} className="mb-3">
+                  <UserReview review={review} />
+                </Col>
               ))}
-            </div>
-          </div>
-          
-          <div className="flex gap-3">
-            <button
-              onClick={() => onAddToItinerary(attraction)}
-              disabled={isInItinerary}
-              className={`flex-1 py-3 px-6 rounded-lg font-medium transition-colors ${
-                isInItinerary
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-              }`}
-            >
-              {isInItinerary ? 'Added to Itinerary' : 'Add to Itinerary'}
-            </button>
-            <a
-              href={attraction.bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition-colors"
-            >
-              <ExternalLink className="w-5 h-5" />
-              Book Now
-            </a>
+            </Row>
           </div>
         </div>
-      </div>
-    </div>
+      </Modal.Body>
+      
+      {/* Action Buttons */}
+      <Modal.Footer className="border-0 bg-light p-4">
+        <div className="d-flex w-100 gap-3">
+          <Button
+            variant={isInItinerary ? "success" : "primary"}
+            onClick={() => onAddToItinerary(attraction)}
+            disabled={isInItinerary}
+            className="flex-grow-1 py-2 fw-bold"
+            size="lg"
+          >
+            {isInItinerary ? (
+              <>
+                ✓ Added to Itinerary
+              </>
+            ) : (
+              <>
+                + Add to Itinerary
+              </>
+            )}
+          </Button>
+          <Button
+            as="a"
+            href={attraction.bookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="success"
+            className="d-flex align-items-center px-4 py-2 fw-bold"
+            size="lg"
+          >
+            <BoxArrowUpRight size={18} className="me-2" />
+            Book Now
+          </Button>
+        </div>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

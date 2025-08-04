@@ -1,183 +1,538 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Form, Modal } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Button, Badge, Form, Modal, Alert } from 'react-bootstrap';
 import { 
   Star, 
   StarFill, 
-  HandThumbsUp, 
-  HandThumbsDown, 
   Person, 
-  Calendar 
+  Calendar,
+  PlusCircle,
+  Trash3,
+  Filter,
+  SortDown,
+  Search,
+  ExclamationTriangle
 } from "react-bootstrap-icons";
-// Rating Component
-const RatingDisplay = ({ rating, showValue = true, size = 16 }) => {
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    stars.push(
-      i <= rating ? 
-        <StarFill key={i} className="text-warning" size={size} /> : 
-        <Star key={i} className="text-muted" size={size} />
+
+const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
+  // State Management
+  const [userReviews, setUserReviews] = useState([]);
+  const [showAddReview, setShowAddReview] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('recent');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+
+  // Load user reviews from localStorage on component mount
+  useEffect(() => {
+    const savedReviews = localStorage.getItem('nyc-tourist-reviews');
+    if (savedReviews) {
+      try {
+        setUserReviews(JSON.parse(savedReviews));
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+        setUserReviews([]);
+      }
+    }
+  }, []);
+
+  // Save user reviews to localStorage whenever userReviews changes
+  useEffect(() => {
+    localStorage.setItem('nyc-tourist-reviews', JSON.stringify(userReviews));
+  }, [userReviews]);
+
+  // Get all reviews (existing + user-added)
+  const getAllReviews = () => {
+    const existingReviews = attractions.flatMap(attraction => 
+      attraction.reviews.map(review => ({
+        ...review,
+        attractionName: attraction.name,
+        attractionId: attraction.id,
+        category: attraction.category,
+        isUserReview: false,
+        id: `existing-${attraction.id}-${attraction.reviews.indexOf(review)}`
+      }))
     );
-  }
+
+    return [...existingReviews, ...userReviews];
+  };
+
+  // Add new review
+  const addReview = (reviewData) => {
+    const newReview = {
+      ...reviewData,
+      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      isUserReview: true,
+      dateAdded: new Date().toISOString()
+    };
+
+    setUserReviews(prev => [newReview, ...prev]);
+  };
+
+  // Delete review
+  const deleteReview = (reviewId) => {
+    setUserReviews(prev => prev.filter(review => review.id !== reviewId));
+    setShowDeleteConfirm(null);
+  };
+
+  // Filter and sort reviews
+  const getFilteredReviews = () => {
+    let reviews = getAllReviews();
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      reviews = reviews.filter(review => review.category === selectedCategory);
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      reviews = reviews.filter(review => 
+        review.attractionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        review.user.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Sort reviews
+    reviews.sort((a, b) => {
+      switch(sortBy) {
+        case 'recent':
+          return new Date(b.dateAdded || '2024-01-01') - new Date(a.dateAdded || '2024-01-01');
+        case 'rating-high':
+          return b.rating - a.rating;
+        case 'rating-low':
+          return a.rating - b.rating;
+        case 'helpful':
+          return 0; // Remove helpful sorting since we removed the feature
+        default:
+          return 0;
+      }
+    });
+
+    return reviews;
+  };
+
+  const categories = ['all', ...new Set(attractions.map(attr => attr.category))];
+  const filteredReviews = getFilteredReviews();
 
   return (
-    <div className="d-flex align-items-center">
-      {stars}
-      {showValue && <span className="ms-1 text-muted small">{rating}</span>}
+    <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', paddingBottom: '80px' }}>
+      {/* Hero Section */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        padding: '80px 0 60px'
+      }}>
+        <Container>
+          <Row className="align-items-center">
+            <Col lg={8}>
+              <h1 className="display-4 fw-bold mb-4">Reviews & Ratings</h1>
+              <p className="fs-5 mb-4 opacity-90" style={{ lineHeight: 1.6 }}>
+                Read authentic reviews from fellow travelers and share your own experiences 
+                to help others plan their perfect NYC adventure.
+              </p>
+              <Button 
+                variant="light" 
+                size="lg"
+                onClick={() => setShowAddReview(true)}
+                className="d-flex align-items-center px-4 py-3"
+                style={{ borderRadius: '12px', fontWeight: '600' }}
+              >
+                <PlusCircle size={20} className="me-2" />
+                Write a Review
+              </Button>
+            </Col>
+            <Col lg={4} className="text-center">
+              <div className="d-flex justify-content-center gap-4">
+                <div className="text-center">
+                  <div className="h2 fw-bold mb-0">{filteredReviews.length}</div>
+                  <small style={{ opacity: 0.8 }}>Total Reviews</small>
+                </div>
+                <div className="text-center">
+                  <div className="h2 fw-bold mb-0">
+                    {filteredReviews.length > 0 
+                      ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
+                      : '0.0'
+                    }
+                  </div>
+                  <small style={{ opacity: 0.8 }}>Average Rating</small>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+
+      <Container className="py-5">
+        {/* Search and Filters */}
+        <Card className="border-0 shadow-sm mb-4" style={{ borderRadius: '16px' }}>
+          <Card.Body className="p-4">
+            <Row className="g-4 align-items-end">
+              <Col lg={4}>
+                <Form.Label htmlFor="review-search" className="fw-semibold text-dark mb-2">
+                  Search Reviews
+                </Form.Label>
+                <div className="position-relative">
+                  <Form.Control
+                    id="review-search"
+                    type="text"
+                    placeholder="Search by attraction, reviewer, or comment..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="ps-5"
+                    style={{ borderRadius: '10px' }}
+                  />
+                  <Search 
+                    className="position-absolute text-muted" 
+                    style={{ left: '15px', top: '50%', transform: 'translateY(-50%)' }}
+                    size={16}
+                  />
+                </div>
+              </Col>
+              
+              <Col lg={3}>
+                <Form.Label htmlFor="category-filter" className="fw-semibold text-dark mb-2">
+                  <Filter size={16} className="me-2" />
+                  Category
+                </Form.Label>
+                <Form.Select
+                  id="category-filter"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  style={{ borderRadius: '10px' }}
+                >
+                  {categories.map(category => (
+                    <option key={category} value={category}>
+                      {category === 'all' ? 'All Categories' : category}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
+
+              <Col lg={3}>
+                <Form.Label htmlFor="sort-select" className="fw-semibold text-dark mb-2">
+                  <SortDown size={16} className="me-2" />
+                  Sort By
+                </Form.Label>
+                <Form.Select
+                  id="sort-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  style={{ borderRadius: '10px' }}
+                >
+                  <option value="recent">Most Recent</option>
+                  <option value="rating-high">Highest Rating</option>
+                  <option value="rating-low">Lowest Rating</option>
+                </Form.Select>
+              </Col>
+
+              <Col lg={2}>
+                <Button
+                  variant="outline-primary"
+                  className="w-100"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory('all');
+                    setSortBy('recent');
+                  }}
+                  style={{ borderRadius: '10px' }}
+                >
+                  Clear Filters
+                </Button>
+              </Col>
+            </Row>
+
+            {/* Active filters display */}
+            {(searchTerm || selectedCategory !== 'all') && (
+              <Row className="mt-3">
+                <Col>
+                  <div className="d-flex align-items-center gap-2 flex-wrap">
+                    <small className="text-muted fw-semibold">Active filters:</small>
+                    {searchTerm && (
+                      <Badge bg="primary" className="d-flex align-items-center gap-2">
+                        Search: "{searchTerm}"
+                        <button 
+                          className="btn-close btn-close-white"
+                          style={{ fontSize: '0.6rem' }}
+                          onClick={() => setSearchTerm('')}
+                          aria-label="Clear search filter"
+                        />
+                      </Badge>
+                    )}
+                    {selectedCategory !== 'all' && (
+                      <Badge bg="success" className="d-flex align-items-center gap-2">
+                        {selectedCategory}
+                        <button 
+                          className="btn-close btn-close-white"
+                          style={{ fontSize: '0.6rem' }}
+                          onClick={() => setSelectedCategory('all')}
+                          aria-label="Clear category filter"
+                        />
+                      </Badge>
+                    )}
+                  </div>
+                </Col>
+              </Row>
+            )}
+          </Card.Body>
+        </Card>
+
+        {/* Results Summary */}
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 className="h3 fw-bold text-dark mb-1">
+              {filteredReviews.length} Review{filteredReviews.length !== 1 ? 's' : ''}
+            </h2>
+            <p className="text-muted mb-0">
+              {selectedCategory !== 'all' && `in ${selectedCategory} • `}
+              Sorted by {sortBy.replace('-', ' ')}
+            </p>
+          </div>
+          
+          <Button
+            variant="primary"
+            onClick={() => setShowAddReview(true)}
+            className="d-flex align-items-center"
+            style={{ borderRadius: '10px' }}
+          >
+            <PlusCircle size={16} className="me-2" />
+            Add Review
+          </Button>
+        </div>
+
+        {/* Reviews Display */}
+        {filteredReviews.length > 0 ? (
+          <Row className="g-4">
+            {filteredReviews.map((review) => (
+              <Col key={review.id} lg={12}>
+                <ReviewCard 
+                  review={review}
+                  onDelete={review.isUserReview ? () => setShowDeleteConfirm(review.id) : null}
+                />
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          <Card className="border-0 shadow-sm text-center py-5" style={{ borderRadius: '16px' }}>
+            <Card.Body>
+              <div className="mb-4" style={{ fontSize: '4rem', opacity: 0.3 }}>📝</div>
+              <h3 className="fw-bold text-dark mb-3">No reviews found</h3>
+              <p className="text-muted fs-5 mb-4">
+                {searchTerm || selectedCategory !== 'all' 
+                  ? "Try adjusting your search or filter criteria"
+                  : "Be the first to share your experience!"
+                }
+              </p>
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => setShowAddReview(true)}
+                style={{ borderRadius: '12px' }}
+              >
+                <PlusCircle size={20} className="me-2" />
+                Write the First Review
+              </Button>
+            </Card.Body>
+          </Card>
+        )}
+      </Container>
+
+      {/* Add Review Modal */}
+      <AddReviewModal
+        show={showAddReview}
+        onHide={() => setShowAddReview(false)}
+        attractions={attractions}
+        onAddReview={addReview}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={!!showDeleteConfirm} onHide={() => setShowDeleteConfirm(null)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="d-flex align-items-center">
+            <ExclamationTriangle className="text-warning me-2" size={24} />
+            Confirm Delete
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-0">Are you sure you want to delete this review? This action cannot be undone.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteConfirm(null)}>
+            Cancel
+          </Button>
+          <Button 
+            variant="danger" 
+            onClick={() => deleteReview(showDeleteConfirm)}
+            className="d-flex align-items-center"
+          >
+            <Trash3 size={16} className="me-2" />
+            Delete Review
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
 
-// Individual Review Component
-const ReviewCard = ({ review, attractionName }) => {
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 20) + 1);
-
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikeCount(prev => liked ? prev - 1 : prev + 1);
+// Individual Review Card Component
+const ReviewCard = ({ review, onDelete }) => {
+  const getTimeAgo = () => {
+    if (review.dateAdded) {
+      const date = new Date(review.dateAdded);
+      const now = new Date();
+      const diffTime = Math.abs(now - date);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return `${diffDays} days ago`;
+      if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+      return `${Math.floor(diffDays / 30)} months ago`;
+    }
+    return `${Math.floor(Math.random() * 30) + 1} days ago`;
   };
 
-  const getRandomDaysAgo = () => Math.floor(Math.random() * 30) + 1;
+  const RatingDisplay = ({ rating }) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        i <= rating ? 
+          <StarFill key={i} className="text-warning" size={16} /> : 
+          <Star key={i} className="text-muted" size={16} />
+      );
+    }
+    return <div className="d-flex align-items-center">{stars}</div>;
+  };
 
   return (
-    <Card className="mb-3 border-0 shadow-sm">
-      <Card.Body>
-        <div className="d-flex justify-content-between align-items-start mb-3">
-          <div className="d-flex align-items-center">
-            <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '40px', height: '40px' }}>
-              <Person className="text-white" size={20} />
-            </div>
-            <div>
-              <h6 className="mb-0 fw-bold">{review.user}</h6>
-              <small className="text-muted">Verified Traveler</small>
-            </div>
-          </div>
-          <div className="text-end">
-            <RatingDisplay rating={review.rating} showValue={false} />
-            <small className="text-muted d-block">
-              <Calendar size={12} className="me-1" />
-              {getRandomDaysAgo()} days ago
-            </small>
-          </div>
-        </div>
-        
-        <div className="mb-3">
-          <Badge bg="light" text="dark" className="mb-2">
-            {attractionName}
-          </Badge>
-          <p className="mb-0 text-dark">{review.comment}</p>
-        </div>
-        
-        <div className="d-flex justify-content-between align-items-center">
-          <Button
-            variant="link"
-            size="sm"
-            className={`p-0 text-decoration-none ${liked ? 'text-primary' : 'text-muted'}`}
-            onClick={handleLike}
+    <Card className="border-0 shadow-sm mb-3" style={{ borderRadius: '16px' }}>
+      <Card.Body className="p-4">
+        <div className="d-flex align-items-start mb-3">
+          <div 
+            className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
+            style={{ width: '48px', height: '48px', minWidth: '48px' }}
           >
-            <ThumbsUp size={14} className="me-1" />
-            Helpful ({likeCount})
-          </Button>
-          
-          <small className="text-muted">
-            Was this review helpful?
-          </small>
+            <Person className="text-white" size={24} />
+          </div>
+          <div className="flex-grow-1">
+            <div className="d-flex align-items-center justify-content-between mb-2">
+              <div>
+                <h6 className="mb-1 fw-bold">{review.user}</h6>
+                <div className="d-flex align-items-center gap-2">
+                  <Badge 
+                    bg={review.isUserReview ? "success" : "light"} 
+                    text={review.isUserReview ? "white" : "dark"}
+                    className="small"
+                  >
+                    {review.isUserReview ? "Your Review" : "Verified Traveler"}
+                  </Badge>
+                  <small className="text-muted d-flex align-items-center">
+                    <Calendar size={12} className="me-1" />
+                    {getTimeAgo()}
+                  </small>
+                </div>
+              </div>
+              {onDelete && (
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={onDelete}
+                  className="d-flex align-items-center"
+                  style={{ borderRadius: '8px' }}
+                >
+                  <Trash3 size={14} className="me-2" />
+                  Delete
+                </Button>
+              )}
+            </div>
+            
+            <div className="d-flex align-items-center mb-3">
+              <RatingDisplay rating={review.rating} />
+              <span className="mx-2">•</span>
+              <Badge bg="primary" className="small">
+                {review.attractionName}
+              </Badge>
+            </div>
+            
+            <p className="text-dark mb-0" style={{ lineHeight: '1.6' }}>
+              {review.comment}
+            </p>
+          </div>
         </div>
       </Card.Body>
     </Card>
   );
-};
+  };
 
-// Attraction Review Summary
-const AttractionReviewSummary = ({ attraction, onViewDetails }) => {
-  const averageRating = attraction.rating;
-  const totalReviews = attraction.reviews.length;
-
-  return (
-    <Card className="mb-4 hover-card">
-      <Row className="g-0">
-        <Col md={3}>
-          <img 
-            src={attraction.image || `https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=300&h=200&fit=crop`}
-            alt={attraction.name}
-            className="img-fluid h-100 w-100 rounded-start"
-            style={{ objectFit: 'cover', minHeight: '150px' }}
-          />
-        </Col>
-        <Col md={9}>
-          <Card.Body>
-            <div className="d-flex justify-content-between align-items-start mb-2">
-              <div>
-                <Card.Title className="h5">{attraction.name}</Card.Title>
-                <Badge bg="primary" className="me-2">{attraction.category}</Badge>
-                <Badge bg={attraction.price === 'Free' ? 'success' : 'warning'}>
-                  {attraction.price}
-                </Badge>
-              </div>
-              <Button 
-                variant="outline-primary" 
-                size="sm"
-                onClick={() => onViewDetails(attraction)}
-              >
-                View Details
-              </Button>
-            </div>
-            
-            <div className="mb-2">
-              <RatingDisplay rating={averageRating} size={18} />
-              <span className="ms-2 text-muted">
-                ({totalReviews} review{totalReviews !== 1 ? 's' : ''})
-              </span>
-            </div>
-            
-            <p className="text-muted small mb-3">
-              {attraction.description.substring(0, 120)}...
-            </p>
-            
-            {/* Recent Reviews Preview */}
-            <div>
-              <h6 className="mb-2">Recent Reviews:</h6>
-              {attraction.reviews.slice(0, 2).map((review, index) => (
-                <div key={index} className="border-start border-primary border-3 ps-3 mb-2">
-                  <div className="d-flex justify-content-between align-items-center mb-1">
-                    <small className="fw-bold">{review.user}</small>
-                    <RatingDisplay rating={review.rating} showValue={false} size={12} />
-                  </div>
-                  <p className="small mb-0 text-muted">
-                    "{review.comment.substring(0, 100)}..."
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Card.Body>
-        </Col>
-      </Row>
-    </Card>
-  );
-};
-
-// Add Review Modal
-const AddReviewModal = ({ show, onHide, attractions }) => {
+// Add Review Modal Component
+const AddReviewModal = ({ show, onHide, attractions, onAddReview }) => {
   const [selectedAttraction, setSelectedAttraction] = useState('');
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [userName, setUserName] = useState('');
+  const [hoverRating, setHoverRating] = useState(0);
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!userName.trim()) newErrors.userName = 'Name is required';
+    if (!selectedAttraction) newErrors.selectedAttraction = 'Please select an attraction';
+    if (!comment.trim()) newErrors.comment = 'Review comment is required';
+    if (comment.trim().length < 10) newErrors.comment = 'Review must be at least 10 characters';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically submit the review to your backend
-    console.log('New Review:', { selectedAttraction, rating, comment, userName });
+    
+    if (!validateForm()) return;
+
+    const attraction = attractions.find(attr => attr.id === parseInt(selectedAttraction));
+    
+    const reviewData = {
+      user: userName.trim(),
+      rating: rating,
+      comment: comment.trim(),
+      attractionId: parseInt(selectedAttraction),
+      attractionName: attraction.name,
+      category: attraction.category
+    };
+    
+    onAddReview(reviewData);
     
     // Reset form
     setSelectedAttraction('');
     setRating(5);
     setComment('');
     setUserName('');
+    setErrors({});
     onHide();
-    
-    // Show success message (you could use toast notifications)
-    alert('Thank you for your review!');
   };
+
+  const RatingStars = ({ rating, onRatingChange, onHover, onLeave }) => (
+    <div className="d-flex align-items-center">
+      {[1, 2, 3, 4, 5].map(star => (
+        <Button
+          key={star}
+          variant="link"
+          className="p-1"
+          onClick={() => onRatingChange(star)}
+          onMouseEnter={() => onHover(star)}
+          onMouseLeave={onLeave}
+          style={{ lineHeight: 1 }}
+        >
+          {star <= (hoverRating || rating) ? 
+            <StarFill className="text-warning" size={28} /> : 
+            <Star className="text-muted" size={28} />
+          }
+        </Button>
+      ))}
+      <span className="ms-3 fw-semibold">
+        ({hoverRating || rating} star{(hoverRating || rating) !== 1 ? 's' : ''})
+      </span>
+    </div>
+  );
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
@@ -189,67 +544,72 @@ const AddReviewModal = ({ show, onHide, attractions }) => {
           <Row>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Your Name</Form.Label>
+                <Form.Label htmlFor="reviewer-name">Your Name *</Form.Label>
                 <Form.Control
+                  id="reviewer-name"
                   type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   placeholder="Enter your name"
-                  required
+                  isInvalid={!!errors.userName}
+                  style={{ borderRadius: '8px' }}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.userName}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Select Attraction</Form.Label>
+                <Form.Label htmlFor="attraction-select">Select Attraction *</Form.Label>
                 <Form.Select
+                  id="attraction-select"
                   value={selectedAttraction}
                   onChange={(e) => setSelectedAttraction(e.target.value)}
-                  required
+                  isInvalid={!!errors.selectedAttraction}
+                  style={{ borderRadius: '8px' }}
                 >
                   <option value="">Choose an attraction...</option>
                   {attractions.map(attraction => (
                     <option key={attraction.id} value={attraction.id}>
-                      {attraction.name}
+                      {attraction.name} ({attraction.category})
                     </option>
                   ))}
                 </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.selectedAttraction}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
           </Row>
           
           <Form.Group className="mb-3">
-            <Form.Label>Rating</Form.Label>
-            <div className="d-flex align-items-center">
-              {[1, 2, 3, 4, 5].map(star => (
-                <Button
-                  key={star}
-                  variant="link"
-                  className="p-1"
-                  onClick={() => setRating(star)}
-                >
-                  {star <= rating ? 
-                    <StarFill className="text-warning" size={24} /> : 
-                    <Star className="text-muted" size={24} />
-                  }
-                </Button>
-              ))}
-              <span className="ms-2">({rating} star{rating !== 1 ? 's' : ''})</span>
-            </div>
+            <Form.Label>Rating *</Form.Label>
+            <RatingStars
+              rating={rating}
+              onRatingChange={setRating}
+              onHover={setHoverRating}
+              onLeave={() => setHoverRating(0)}
+            />
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Your Review</Form.Label>
+            <Form.Label htmlFor="review-comment">Your Review *</Form.Label>
             <Form.Control
+              id="review-comment"
               as="textarea"
               rows={4}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Share your experience with this attraction..."
-              required
+              placeholder="Share your experience with this attraction... What did you like? Any tips for other visitors?"
+              isInvalid={!!errors.comment}
+              style={{ borderRadius: '8px' }}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.comment}
+            </Form.Control.Feedback>
             <Form.Text className="text-muted">
-              Please be specific about what you liked or didn't like.
+              Minimum 10 characters. Be specific about what you liked or didn't like.
             </Form.Text>
           </Form.Group>
         </Modal.Body>
@@ -258,223 +618,12 @@ const AddReviewModal = ({ show, onHide, attractions }) => {
             Cancel
           </Button>
           <Button variant="primary" type="submit">
+            <PlusCircle size={16} className="me-2" />
             Submit Review
           </Button>
         </Modal.Footer>
       </Form>
     </Modal>
-  );
-};
-
-const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
-  const [showAddReview, setShowAddReview] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('recent');
-
-  // Get all reviews from all attractions
-  const allReviews = attractions.flatMap(attraction => 
-    attraction.reviews.map(review => ({
-      ...review,
-      attractionName: attraction.name,
-      attractionId: attraction.id
-    }))
-  );
-
-  // Filter and sort reviews
-  const filteredReviews = allReviews.filter(review => {
-    if (selectedCategory === 'all') return true;
-    const attraction = attractions.find(a => a.id === review.attractionId);
-    return attraction.category === selectedCategory;
-  });
-
-  // Get unique categories
-  const categories = ['all', ...new Set(attractions.map(attr => attr.category))];
-
-  return (
-    <Container>
-      {/* Page Header */}
-      <div className="text-center mb-5">
-        <h1 className="display-5 fw-bold text-dark mb-3">Reviews & Ratings</h1>
-        <p className="lead text-muted mb-4">
-          Read genuine reviews from fellow travelers and share your own experiences 
-          to help others plan their perfect NYC trip.
-        </p>
-        <Button 
-          variant="primary" 
-          size="lg"
-          onClick={() => setShowAddReview(true)}
-        >
-          ✍️ Write a Review
-        </Button>
-      </div>
-
-      {/* Filters and Stats */}
-      <Row className="mb-4">
-        <Col md={8}>
-          <Card>
-            <Card.Body>
-              <Row>
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label className="fw-bold">Filter by Category:</Form.Label>
-                    <Form.Select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                    >
-                      {categories.map(category => (
-                        <option key={category} value={category}>
-                          {category === 'all' ? 'All Categories' : category}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label className="fw-bold">Sort by:</Form.Label>
-                    <Form.Select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                    >
-                      <option value="recent">Most Recent</option>
-                      <option value="rating-high">Highest Rating</option>
-                      <option value="rating-low">Lowest Rating</option>
-                      <option value="helpful">Most Helpful</option>
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card className="bg-light">
-            <Card.Body className="text-center">
-              <h4 className="text-primary mb-0">{allReviews.length}</h4>
-              <small className="text-muted">Total Reviews</small>
-              <hr />
-              <h5 className="text-warning mb-0">
-                {(allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length).toFixed(1)} ⭐
-              </h5>
-              <small className="text-muted">Average Rating</small>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col lg={8}>
-          {/* Attraction Reviews */}
-          <div className="mb-5">
-            <h3 className="mb-4">Attraction Reviews</h3>
-            {attractions
-              .filter(attr => selectedCategory === 'all' || attr.category === selectedCategory)
-              .map(attraction => (
-                <AttractionReviewSummary
-                  key={attraction.id}
-                  attraction={attraction}
-                  onViewDetails={setSelectedAttraction}
-                />
-              ))}
-          </div>
-
-          {/* Individual Reviews Feed */}
-          <div>
-            <h3 className="mb-4">Recent Reviews</h3>
-            {filteredReviews.slice(0, 10).map((review, index) => (
-              <ReviewCard
-                key={`${review.attractionId}-${index}`}
-                review={review}
-                attractionName={review.attractionName}
-              />
-            ))}
-            
-            {filteredReviews.length === 0 && (
-              <Card className="text-center py-5">
-                <Card.Body>
-                  <h5>No reviews found</h5>
-                  <p className="text-muted">Try adjusting your filters or be the first to write a review!</p>
-                </Card.Body>
-              </Card>
-            )}
-          </div>
-        </Col>
-
-        <Col lg={4}>
-          {/* Sidebar with review highlights */}
-          <div className="sticky-top" style={{ top: '100px' }}>
-            <Card className="mb-4">
-              <Card.Header>
-                <h5 className="mb-0">Review Highlights</h5>
-              </Card.Header>
-              <Card.Body>
-                <div className="mb-3">
-                  <h6>Most Loved Attractions</h6>
-                  {attractions
-                    .sort((a, b) => b.rating - a.rating)
-                    .slice(0, 3)
-                    .map(attraction => (
-                      <div key={attraction.id} className="d-flex justify-content-between align-items-center mb-2">
-                        <small>{attraction.name}</small>
-                        <RatingDisplay rating={attraction.rating} size={12} />
-                      </div>
-                    ))}
-                </div>
-                
-                <hr />
-                
-                <div>
-                  <h6>Categories</h6>
-                  {categories.filter(cat => cat !== 'all').map(category => {
-                    const categoryAttractions = attractions.filter(attr => attr.category === category);
-                    const avgRating = categoryAttractions.reduce((sum, attr) => sum + attr.rating, 0) / categoryAttractions.length;
-                    
-                    return (
-                      <div key={category} className="d-flex justify-content-between align-items-center mb-2">
-                        <small>{category}</small>
-                        <RatingDisplay rating={avgRating} size={12} />
-                      </div>
-                    );
-                  })}
-                </div>
-              </Card.Body>
-            </Card>
-
-            <Card>
-              <Card.Header>
-                <h5 className="mb-0">💡 Review Tips</h5>
-              </Card.Header>
-              <Card.Body>
-                <ul className="list-unstyled small mb-0">
-                  <li className="mb-2">✨ Be specific about your experience</li>
-                  <li className="mb-2">📸 Mention photo opportunities</li>
-                  <li className="mb-2">🕐 Include timing recommendations</li>
-                  <li className="mb-2">💰 Comment on value for money</li>
-                  <li className="mb-0">🎯 Be helpful to future visitors</li>
-                </ul>
-              </Card.Body>
-            </Card>
-          </div>
-        </Col>
-      </Row>
-
-      {/* Add Review Modal */}
-      <AddReviewModal
-        show={showAddReview}
-        onHide={() => setShowAddReview(false)}
-        attractions={attractions}
-      />
-
-      <style jsx>{`
-        .hover-card {
-          transition: all 0.2s ease;
-        }
-        .hover-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
-        }
-      `}</style>
-    </Container>
   );
 };
 

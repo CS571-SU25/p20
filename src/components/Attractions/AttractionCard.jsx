@@ -1,71 +1,179 @@
-import React, { useState } from 'react';
-import { Clock, Heart } from 'lucide-react';
-import RatingDisplay from '../UI/RatingDisplay';
+import React from 'react';
+import { Card, Button, Badge } from 'react-bootstrap';
+import { Clock, GeoAlt, Star, StarFill, Dash, Plus } from 'react-bootstrap-icons';
 
-const AttractionCard = ({ attraction, onAddToItinerary, isInItinerary, onViewDetails }) => {
-  const [liked, setLiked] = useState(false);
+const AttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItinerary, isInItinerary, onViewDetails }) => {
+  const RatingDisplay = ({ rating }) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        i <= rating ? 
+          <StarFill key={i} className="text-warning" size={14} /> : 
+          <Star key={i} className="text-muted" size={14} />
+      );
+    }
+    return <div className="d-flex align-items-center">{stars}</div>;
+  };
+
+  const handleItineraryAction = (e) => {
+    e.stopPropagation();
+    if (isInItinerary) {
+      onRemoveFromItinerary(attraction.id);
+    } else {
+      onAddToItinerary(attraction);
+    }
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-      <div className="relative">
-        <img 
-          src={attraction.image} 
-          alt={attraction.name}
-          className="w-full h-48 object-cover"
+    <Card 
+      className="h-100 border-0 shadow-sm position-relative overflow-hidden"
+      style={{ 
+        borderRadius: '12px',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-4px)';
+        e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+      }}
+    >
+      {/* Image Section */}
+      <div className="position-relative" style={{ height: '220px' }}>
+        <img
+          src={attraction.image}
+          alt={`${attraction.name} - ${attraction.category} attraction in NYC`}
+          className="w-100 h-100"
+          style={{ 
+            objectFit: 'cover',
+            filter: 'brightness(0.95)'
+          }}
+          onClick={() => onViewDetails(attraction)}
         />
-        <button
-          onClick={() => setLiked(!liked)}
-          className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm ${
-            liked ? 'bg-red-500 text-white' : 'bg-white/80 text-gray-600'
-          } hover:bg-red-500 hover:text-white transition-colors`}
+
+        {/* Category Badge */}
+        <Badge 
+          className="position-absolute bottom-0 start-0 m-3 px-3 py-2"
+          style={{ 
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            color: 'white',
+            fontSize: '0.75rem',
+            borderRadius: '20px'
+          }}
         >
-          <Heart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
-        </button>
-        <div className="absolute bottom-3 left-3">
-          <span className="bg-black/70 text-white px-2 py-1 rounded text-sm font-medium">
-            {attraction.category}
-          </span>
+          {attraction.category}
+        </Badge>
+
+        {/* Rating Badge */}
+        <div 
+          className="position-absolute bottom-0 end-0 m-3 px-2 py-1 d-flex align-items-center gap-1"
+          style={{
+            backgroundColor: 'rgba(255,255,255,0.95)',
+            borderRadius: '20px',
+            fontSize: '0.75rem',
+            backdropFilter: 'blur(10px)'
+          }}
+        >
+          <Star className="text-warning" size={12} fill="currentColor" />
+          <span className="fw-bold text-dark">{attraction.rating}</span>
         </div>
-      </div>
-      
-      <div className="p-4">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{attraction.name}</h3>
-        
-        <div className="flex items-center mb-2">
-          <RatingDisplay rating={attraction.rating} />
-          <span className="text-gray-400 mx-2">•</span>
-          <Clock className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-600 ml-1">{attraction.duration}</span>
-        </div>
-        
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">{attraction.description}</p>
-        
-        <div className="flex items-center text-sm text-gray-500 mb-4">
-          <Clock className="w-4 h-4 mr-1" />
-          {attraction.hours}
-        </div>
-        
-        <div className="flex gap-2">
-          <button
-            onClick={() => onAddToItinerary(attraction)}
-            disabled={isInItinerary}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-              isInItinerary 
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
+
+        {/* Itinerary Status Indicator */}
+        {isInItinerary && (
+          <div 
+            className="position-absolute top-0 start-0 m-3 px-2 py-1 d-flex align-items-center"
+            style={{
+              backgroundColor: 'rgba(40, 167, 69, 0.9)',
+              color: 'white',
+              borderRadius: '20px',
+              fontSize: '0.7rem'
+            }}
           >
-            {isInItinerary ? 'Added' : 'Add to Itinerary'}
-          </button>
-          <button
-            onClick={() => onViewDetails(attraction)}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            Details
-          </button>
-        </div>
+            ✓ In Itinerary
+          </div>
+        )}
       </div>
-    </div>
+
+      {/* Content Section */}
+      <Card.Body className="d-flex flex-column p-4">
+        <div className="mb-3" onClick={() => onViewDetails(attraction)}>
+          <h5 className="fw-bold text-dark mb-2 lh-sm" style={{ fontSize: '1.1rem' }}>
+            {attraction.name}
+          </h5>
+          
+          <div className="d-flex align-items-center mb-2 text-muted">
+            <RatingDisplay rating={attraction.rating} />
+            <span className="mx-2">•</span>
+            <Clock size={14} />
+            <span className="ms-1 small">{attraction.duration}</span>
+          </div>
+          
+          <p className="text-muted mb-0 small" style={{ 
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            lineHeight: '1.4'
+          }}>
+            {attraction.description}
+          </p>
+        </div>
+
+        <div className="text-muted small mb-3 d-flex align-items-center">
+          <Clock size={12} className="me-1" />
+          <span>{attraction.hours}</span>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-auto">
+          <div className="d-grid gap-2 d-sm-flex">
+            <Button
+              variant={isInItinerary ? "danger" : "primary"}
+              size="sm"
+              onClick={handleItineraryAction}
+              className="flex-sm-fill fw-semibold d-flex align-items-center justify-content-center"
+              style={{ 
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontSize: '0.875rem'
+              }}
+            >
+              {isInItinerary ? (
+                <>
+                  <Dash size={16} className="me-1" />
+                  Remove from Itinerary
+                </>
+              ) : (
+                <>
+                  <Plus size={16} className="me-1" />
+                  Add to Itinerary
+                </>
+              )}
+            </Button>
+            
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onViewDetails(attraction);
+              }}
+              className="fw-semibold"
+              style={{ 
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontSize: '0.875rem'
+              }}
+            >
+              Details
+            </Button>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
   );
 };
 

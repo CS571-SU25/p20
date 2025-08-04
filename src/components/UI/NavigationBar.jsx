@@ -1,102 +1,78 @@
 import React from 'react';
 import { Navbar, Nav, Container, Badge } from 'react-bootstrap';
-import { MapPin, Star, Calendar, Users } from 'lucide-react';
+import { House, Building, Calendar, ChatSquareText } from 'react-bootstrap-icons';
 
 const NavigationBar = ({ currentPage, setCurrentPage, itineraryCount }) => {
   const navItems = [
-    { id: 'home', label: 'Home', icon: MapPin },
-    { id: 'attractions', label: 'Attractions', icon: Star },
-    { id: 'itinerary', label: 'My Itinerary', icon: Calendar },
-    { id: 'reviews', label: 'Reviews', icon: Users }
+    { key: 'home', label: 'Home', icon: House },
+    { key: 'attractions', label: 'Attractions', icon: Building },
+    { key: 'itinerary', label: 'My Itinerary', icon: Calendar },
+    { key: 'reviews', label: 'Reviews', icon: ChatSquareText }
   ];
 
   return (
-    <Navbar bg="white" expand="lg" className="shadow-lg border-bottom sticky-top" style={{ zIndex: 1050 }}>
-      <Container fluid className="px-4 px-lg-5">
-        {/* Brand/Logo */}
+    <Navbar 
+      bg="dark" 
+      variant="dark" 
+      expand="lg" 
+      className="shadow-sm" 
+      fixed="top"
+      style={{ zIndex: 1030 }}
+    >
+      <Container>
         <Navbar.Brand 
-          href="#" 
+          className="fw-bold d-flex align-items-center"
           onClick={() => setCurrentPage('home')}
-          className="fw-bold text-primary d-flex align-items-center fs-4 hover-brand"
           style={{ cursor: 'pointer' }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              setCurrentPage('home');
+            }
+          }}
         >
-          <MapPin className="me-2" size={24} />
-          NYC Tourist Guide
+          🗽 NYC Travel Guide
         </Navbar.Brand>
-
-        {/* Mobile Toggle */}
-        <Navbar.Toggle aria-controls="navbar-nav" />
         
-        {/* Navigation Items */}
-        <Navbar.Collapse id="navbar-nav">
+        <Navbar.Toggle 
+          aria-controls="main-navbar-nav"
+          aria-label="Toggle navigation menu"
+        />
+        
+        <Navbar.Collapse id="main-navbar-nav">
           <Nav className="ms-auto">
-            {navItems.map(item => {
-              const Icon = item.icon;
-              const isActive = currentPage === item.id;
-              
-              return (
-                <Nav.Link 
-                  key={item.id}
-                  href="#" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentPage(item.id);
-                  }}
-                  className={`d-flex align-items-center px-3 py-2 mx-1 rounded-pill fw-medium position-relative nav-item-custom ${
-                    isActive ? 'bg-primary text-white shadow-sm' : 'text-dark hover-nav-item'
-                  }`}
-                  style={{ 
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease-in-out',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Icon className="me-2" size={18} />
-                  {item.label}
-                  {item.id === 'itinerary' && itineraryCount > 0 && (
-                    <Badge 
-                      bg="danger" 
-                      pill 
-                      className="position-absolute top-0 start-100 translate-middle ms-2"
-                      style={{ fontSize: '0.7rem' }}
-                    >
-                      {itineraryCount}
-                    </Badge>
-                  )}
-                </Nav.Link>
-              );
-            })}
+            {navItems.map(({ key, label, icon: Icon }) => (
+              <Nav.Link
+                key={key}
+                onClick={() => setCurrentPage(key)}
+                className={`d-flex align-items-center px-3 ${currentPage === key ? 'active fw-bold' : ''}`}
+                aria-current={currentPage === key ? 'page' : undefined}
+                style={{ cursor: 'pointer' }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setCurrentPage(key);
+                  }
+                }}
+              >
+                <Icon size={18} className="me-2" aria-hidden="true" />
+                {label}
+                {key === 'itinerary' && itineraryCount > 0 && (
+                  <Badge 
+                    bg="primary" 
+                    className="ms-2"
+                    aria-label={`${itineraryCount} items in itinerary`}
+                  >
+                    {itineraryCount}
+                  </Badge>
+                )}
+              </Nav.Link>
+            ))}
           </Nav>
         </Navbar.Collapse>
       </Container>
-
-      {/* Custom CSS */}
-      <style jsx>{`
-        .hover-brand:hover {
-          transform: scale(1.02);
-          transition: transform 0.2s ease-in-out;
-        }
-        
-        .nav-item-custom {
-          transition: all 0.2s ease-in-out !important;
-        }
-        
-        .hover-nav-item:hover {
-          background-color: #f8f9fa !important;
-          color: #0d6efd !important;
-          transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-        }
-        
-        .navbar {
-          backdrop-filter: blur(10px);
-          background-color: rgba(255, 255, 255, 0.95) !important;
-        }
-        
-        .shadow-lg {
-          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        }
-      `}</style>
     </Navbar>
   );
 };

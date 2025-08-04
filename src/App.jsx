@@ -18,6 +18,8 @@ import AttractionDetailModal from './components/attractions/AttractionDetailModa
 
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
+// Import your custom CSS
+import './App.css';
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -78,14 +80,14 @@ const AppContent = () => {
   };
 
   return (
-    <div className="min-vh-100 bg-light text-dark" aria-label="Main NYC Travel App Container">
+    <div className="min-vh-100 bg-light text-dark">
       <NavigationBar
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         itineraryCount={itinerary.length}
       />
 
-      <Container fluid className="py-4" role="main">
+      <main role="main" style={{ minHeight: 'calc(100vh - 200px)' }}>
         <Routes>
           <Route 
             path="/" 
@@ -94,6 +96,7 @@ const AppContent = () => {
                 attractions={attractionsData}
                 itinerary={itinerary}
                 addToItinerary={addToItinerary}
+                removeFromItinerary={removeFromItinerary}
                 setSelectedAttraction={setSelectedAttraction}
                 setCurrentPage={setCurrentPage}
               />
@@ -107,6 +110,7 @@ const AppContent = () => {
                 attractions={attractionsData}
                 itinerary={itinerary}
                 addToItinerary={addToItinerary}
+                removeFromItinerary={removeFromItinerary}
                 setSelectedAttraction={setSelectedAttraction}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
@@ -143,7 +147,7 @@ const AppContent = () => {
             } 
           />
         </Routes>
-      </Container>
+      </main>
 
       {selectedAttraction && (
         <AttractionDetailModal

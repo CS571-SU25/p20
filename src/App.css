@@ -1,42 +1,64 @@
+/* App.css - Fixed layout issues */
 #root {
   width: 100%;
   margin: 0;
   padding: 0;
 }
 
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Fix for fixed navbar overlap */
+body {
+  padding-top: 80px; /* Adjust based on your navbar height */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Navbar fixed positioning */
+.navbar-fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+}
+
+/* Hover effects for cards */
+.hover-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* Hero section gradient */
+.hero-section {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+/* Remove default button focus outline and add custom */
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Loading and error states */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Responsive text */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2rem;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .display-5 {
+    font-size: 1.5rem;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  
+  body {
+    padding-top: 70px; /* Smaller navbar on mobile */
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

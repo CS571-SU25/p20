@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Badge,
-  Card,
-  Form
-} from 'react-bootstrap';
-import { Calendar, Download, Share2, Route } from 'lucide-react';
+import { Container, Row, Col, Button, Badge, Card, Form } from 'react-bootstrap';
+import { Calendar, Download, Share, Signpost, Clock, Plus } from 'react-bootstrap-icons';
 import ItineraryItem from '../Itinerary/itineraryItem';
 
 const ItineraryPage = ({
@@ -22,6 +14,7 @@ const ItineraryPage = ({
   setSelectedDate,
   setCurrentPage
 }) => {
+
   const calculateTotalTime = () => {
     return itinerary.reduce((total, attraction) => {
       const duration = parseInt(attraction.duration.split('-')[1] || attraction.duration.split('-')[0]);
@@ -64,86 +57,153 @@ const ItineraryPage = ({
   };
 
   return (
-    <Container fluid className="px-0 py-0" style={{minHeight: '100vh'}}>
-      <Row className="g-0" style={{minHeight: '100vh'}}>
-        <Col className="px-4 py-4">
-          <div className="mb-4">
-            <h1 className="display-5 fw-bold text-dark mb-3">Build Your Itinerary</h1>
-            <p className="lead text-muted">
-              Plan your perfect NYC adventure by organizing your favorite attractions into a personalized itinerary.
-            </p>
-          </div>
+    <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', paddingBottom: '80px' }}>
+      {/* Hero Section */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        padding: '60px 0'
+      }}>
+        <Container>
+          <Row className="align-items-center">
+            <Col lg={8}>
+              <h1 className="display-4 fw-bold mb-3">Your NYC Itinerary</h1>
+              <p className="fs-5 mb-0" style={{ opacity: 0.9 }}>
+                Plan your perfect day with {itinerary.length} selected attractions
+              </p>
+            </Col>
+            <Col lg={4} className="text-center">
+              <div className="d-flex justify-content-center gap-4">
+                <div className="text-center">
+                  <div className="h2 fw-bold mb-0">{itinerary.length}</div>
+                  <small style={{ opacity: 0.8 }}>Attractions</small>
+                </div>
+                <div className="text-center">
+                  <div className="h2 fw-bold mb-0">{calculateTotalTime()}h</div>
+                  <small style={{ opacity: 0.8 }}>Total Time</small>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
 
-          <Row className="mb-4">
-            <Col md={6}>
-              <Form.Group controlId="itineraryName" className="mb-3">
-                <Form.Label className="fw-bold">Itinerary Name</Form.Label>
+      <Container className="py-5">
+        {/* Controls Section */}
+        <Card className="border-0 shadow-sm mb-4" style={{ borderRadius: '16px' }}>
+          <Card.Body className="p-4">
+            <Row className="g-4 align-items-end">
+              <Col md={4}>
+                <Form.Label htmlFor="itinerary-name" className="fw-bold text-dark mb-2">
+                  Itinerary Name
+                </Form.Label>
                 <Form.Control
+                  id="itinerary-name"
                   type="text"
                   value={itineraryName}
                   onChange={(e) => setItineraryName(e.target.value)}
-                  placeholder="My NYC Adventure"
+                  className="form-control-lg"
+                  style={{ borderRadius: '8px' }}
                 />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group controlId="visitDate" className="mb-3">
-                <Form.Label className="fw-bold">Visit Date</Form.Label>
+              </Col>
+              <Col md={3}>
+                <Form.Label htmlFor="visit-date" className="fw-bold text-dark mb-2">
+                  Visit Date
+                </Form.Label>
                 <Form.Control
+                  id="visit-date"
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
+                  className="form-control-lg"
+                  style={{ borderRadius: '8px' }}
                 />
-              </Form.Group>
-            </Col>
-          </Row>
+              </Col>
+              <Col md={5}>
+                <div className="d-flex gap-2">
+                  <Button
+                    variant="outline-primary"
+                    onClick={exportItinerary}
+                    disabled={itinerary.length === 0}
+                    className="d-flex align-items-center"
+                    style={{ borderRadius: '8px' }}
+                  >
+                    <Download size={16} className="me-2" />
+                    Export
+                  </Button>
+                  <Button
+                    variant="outline-success"
+                    onClick={shareItinerary}
+                    disabled={itinerary.length === 0}
+                    className="d-flex align-items-center"
+                    style={{ borderRadius: '8px' }}
+                  >
+                    <Share size={16} className="me-2" />
+                    Share
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => setCurrentPage('attractions')}
+                    className="d-flex align-items-center"
+                    style={{ borderRadius: '8px' }}
+                  >
+                    <Plus size={16} className="me-2" />
+                    Add More
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
 
-          <div className="d-flex flex-wrap gap-2 mb-4">
-            <Badge bg="primary" className="fs-6 px-3 py-2">
-              {itinerary.length} attractions
-            </Badge>
-            <Badge bg="success" className="fs-6 px-3 py-2">
-              ~{calculateTotalTime()} hours total
-            </Badge>
-            <Button 
-              variant="outline-secondary" 
-              size="sm"
-              onClick={exportItinerary}
-              disabled={itinerary.length === 0}
-            >
-              <Download size={16} className="me-1" /> Export
-            </Button>
-            <Button 
-              variant="outline-primary" 
-              size="sm"
-              onClick={shareItinerary}
-              disabled={itinerary.length === 0}
-            >
-              <Share2 size={16} className="me-1" /> Share
-            </Button>
-          </div>
+        {itinerary.length === 0 ? (
+          /* Empty State */
+          <Card className="border-0 shadow-sm text-center py-5" style={{ borderRadius: '16px' }}>
+            <Card.Body>
+              <div className="mb-4" style={{ fontSize: '4rem', opacity: 0.3 }}>
+                📋
+              </div>
+              <h3 className="fw-bold text-dark mb-3">Your itinerary is empty</h3>
+              <p className="text-muted fs-5 mb-4">
+                Start building your perfect NYC experience by adding attractions to your itinerary
+              </p>
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => setCurrentPage('attractions')}
+                className="px-4 py-3"
+                style={{ borderRadius: '12px' }}
+              >
+                <Plus size={20} className="me-2" />
+                Browse Attractions
+              </Button>
+            </Card.Body>
+          </Card>
+        ) : (
+          <Row className="g-4">
+            {/* Itinerary Items */}
+            <Col lg={8}>
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="fw-bold text-dark mb-0">Your Plan</h2>
+                <div className="d-flex align-items-center gap-3">
+                  <Badge bg="primary" className="fs-6 px-3 py-2">
+                    {itinerary.length} stops
+                  </Badge>
+                  <Badge bg="success" className="fs-6 px-3 py-2">
+                    ~{calculateTotalTime()} hours
+                  </Badge>
+                </div>
+              </div>
 
-          {itinerary.length === 0 ? (
-            <Card className="text-center py-5 bg-light border-0">
-              <Card.Body>
-                <Calendar size={64} className="text-muted mb-3" />
-                <h4 className="text-muted mb-2">No attractions added yet</h4>
-                <p className="text-muted mb-4">
-                  Browse attractions to start building your perfect NYC itinerary!
-                </p>
-                <Button 
-                  variant="primary" 
-                  size="lg"
-                  onClick={() => setCurrentPage('attractions')}
-                >
-                  Browse Attractions
-                </Button>
-              </Card.Body>
-            </Card>
-          ) : (
-            <>
-              <div className="mb-4">
-                <h3 className="mb-3">Your Itinerary</h3>
+              {/* Drag Instructions */}
+              <div className="alert alert-success d-flex align-items-center mb-4" style={{ borderRadius: '12px' }}>
+                <Plus className="me-2" size={18} />
+                <small>
+                  <strong>Tip:</strong> Your attractions are listed in the order you added them. Perfect for planning your route!
+                </small>
+              </div>
+
+              <div className="d-flex flex-column gap-4">
                 {itinerary.map((attraction, index) => (
                   <ItineraryItem
                     key={attraction.id}
@@ -155,43 +215,65 @@ const ItineraryPage = ({
                   />
                 ))}
               </div>
+            </Col>
 
-              <Card className="bg-light border-0">
-                <Card.Body>
-                  <Row>
-                    <Col md={8}>
-                      <h5 className="mb-3 text-primary">
-                        <Route size={24} className="me-2" />
-                        Optimized Route
-                      </h5>
-                      <p className="text-muted mb-2">
-                        Route optimization considers travel time and proximity between attractions to help you make the most of your visit.
-                      </p>
-                      <div className="alert alert-info border-0 mb-0">
-                        <strong>💡 Pro Tips:</strong>
-                        <ul className="mb-0 mt-2">
-                          <li>Visit outdoor attractions like Central Park and Brooklyn Bridge during good weather</li>
-                          <li>Save indoor attractions like museums for rainy days</li>
-                          <li>Start early to avoid crowds at popular destinations</li>
-                          <li>Allow extra time for transportation between distant attractions</li>
-                        </ul>
+            {/* Sidebar */}
+            <Col lg={4}>
+              <div className="sticky-top" style={{ top: '100px' }}>
+                {/* Summary Card */}
+                <Card className="border-0 shadow-sm mb-4" style={{ borderRadius: '16px' }}>
+                  <Card.Body className="p-4">
+                    <h3 className="fw-bold text-dark mb-3">
+                      <Signpost size={20} className="me-2 text-primary" />
+                      Trip Summary
+                    </h3>
+                    <div className="mb-3">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="text-muted">Total Attractions:</span>
+                        <span className="fw-bold">{itinerary.length}</span>
                       </div>
-                    </Col>
-                    <Col md={4} className="text-center">
-                      <div className="bg-white rounded p-3 shadow-sm">
-                        <h6 className="text-muted">Total Estimated Time</h6>
-                        <h2 className="text-primary mb-0">{calculateTotalTime()}</h2>
-                        <small className="text-muted">hours</small>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="text-muted">Estimated Time:</span>
+                        <span className="fw-bold">{calculateTotalTime()} hours</span>
                       </div>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </>
-          )}
-        </Col>
-      </Row>
-    </Container>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span className="text-muted">Visit Date:</span>
+                        <span className="fw-bold">{new Date(selectedDate).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+
+                {/* Tips Card */}
+                <Card className="border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+                  <Card.Body className="p-4">
+                    <h3 className="fw-bold text-dark mb-3">💡 Pro Tips</h3>
+                    <div className="small text-muted">
+                      <div className="mb-3">
+                        <div className="fw-semibold text-dark mb-1">📝 Add Notes</div>
+                        <p className="mb-0">Click the pencil icon to add personal reminders</p>
+                      </div>
+                      <div className="mb-3">
+                        <div className="fw-semibold text-dark mb-1">🗑️ Delete Notes</div>
+                        <p className="mb-0">Use the X button to remove notes completely</p>
+                      </div>
+                      <div className="mb-3">
+                        <div className="fw-semibold text-dark mb-1">🎫 Book Tickets</div>
+                        <p className="mb-0">Use the Book button to visit official websites</p>
+                      </div>
+                      <div>
+                        <div className="fw-semibold text-dark mb-1">💾 Export & Share</div>
+                        <p className="mb-0">Save your itinerary or share with friends</p>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </div>
+            </Col>
+          </Row>
+        )}
+      </Container>
+    </div>
   );
 };
 
