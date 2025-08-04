@@ -190,8 +190,6 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
           <Clock size={14} className="me-1" />
           <span className="small">{attraction.duration}</span>
         </div>
-
-        {/* Popularity indicator removed */}
       </div>
       
       <Card.Body className="p-4 d-flex flex-column">
@@ -541,7 +539,7 @@ const NYCFactsSection = () => (
   </Card>
 );
 
-//   Events Widget
+// NYC Events Widget
 const NYCEventsWidget = () => (
   <Card 
     className="border-0 text-white h-100 shadow-sm position-relative overflow-hidden" 
@@ -622,86 +620,189 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
 
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      {/* Enhanced Hero Section */}
+      {/* Tourist-Focused Hero Section */}
       <div style={{ 
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         color: 'white',
-        padding: '100px 0 80px',
+        padding: '120px 0 100px',
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Animated Background Pattern */}
+        {/* NYC Skyline Silhouette Background */}
         <div 
-          className="position-absolute w-100 h-100"
+          className="position-absolute w-100"
           style={{
-            top: 0,
+            bottom: 0,
             left: 0,
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            opacity: 0.3,
-            animation: 'float 6s ease-in-out infinite'
+            height: '150px',
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 150'%3E%3Cpath fill='rgba(255,255,255,0.1)' d='M0,150 L0,120 L50,120 L50,80 L100,80 L100,40 L150,40 L150,60 L200,60 L200,20 L250,20 L250,100 L300,100 L300,70 L350,70 L350,30 L400,30 L400,90 L450,90 L450,50 L500,50 L500,110 L550,110 L550,75 L600,75 L600,35 L650,35 L650,95 L700,95 L700,65 L750,65 L750,25 L800,25 L800,85 L850,85 L850,45 L900,45 L900,105 L950,105 L950,55 L1000,55 L1000,125 L1050,125 L1050,75 L1100,75 L1100,135 L1200,135 L1200,150 Z'/%3E%3C/svg%3E")`,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat'
           }}
         />
+        
+        {/* Floating NYC Icons */}
+        <div className="position-absolute w-100 h-100" style={{ top: 0, left: 0 }}>
+          <div style={{ position: 'absolute', top: '15%', left: '8%', fontSize: '5rem', opacity: 0.3, animation: 'float 8s ease-in-out infinite' }}>🗽</div>
+          <div style={{ position: 'absolute', top: '30%', right: '15%', fontSize: '2.5rem', opacity: 0.15, animation: 'float 6s ease-in-out infinite 2s' }}>🏢</div>
+          <div style={{ position: 'absolute', top: '60%', left: '20%', fontSize: '2rem', opacity: 0.2, animation: 'float 7s ease-in-out infinite 1s' }}>🚖</div>
+          <div style={{ position: 'absolute', top: '15%', right: '25%', fontSize: '2.5rem', opacity: 0.15, animation: 'float 9s ease-in-out infinite 3s' }}>🌉</div>
+          <div style={{ position: 'absolute', top: '25%', left: '25%', fontSize: '4rem', opacity: 0.2, animation: 'float 10s ease-in-out infinite 2.5s' }}>🗽</div>
+          <div style={{ position: 'absolute', top: '70%', right: '10%', fontSize: '2rem', opacity: 0.2, animation: 'float 5s ease-in-out infinite 1.5s' }}>🎭</div>
+          <div style={{ position: 'absolute', top: '50%', right: '35%', fontSize: '3.5rem', opacity: 0.25, animation: 'float 7s ease-in-out infinite 4s' }}>🗽</div>
+        </div>
         
         <Container className="position-relative">
           <Row className="align-items-center">
             <Col lg={7}>
-              <h1 className="display-2 fw-bold mb-4" style={{ letterSpacing: '-0.02em', lineHeight: '1.1' }}>
-                Discover NYC Like Never Before
+              <div className="mb-4">
+                <Badge 
+                  className="mb-3 px-3 py-2 fs-6"
+                  style={{ 
+                    background: 'rgba(255,255,255,0.2)', 
+                    color: 'white',
+                    borderRadius: '25px',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
+                  🌟 #1 NYC Tourist Guide
+                </Badge>
+              </div>
+              
+              <h1 className="display-1 fw-bold mb-4" style={{ 
+                letterSpacing: '-0.02em', 
+                lineHeight: '1.1',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+              }}>
+                Welcome to the 
+                <span className="d-block" style={{ color: '#FFE66D' }}>Big Apple!</span>
               </h1>
-              <p className="fs-4 mb-5 opacity-90" style={{ lineHeight: 1.6, maxWidth: '600px' }}>
-                Plan your perfect New York adventure with our curated collection of must-see attractions, 
-                insider tips, and personalized itinerary tools. Experience the city that never sleeps.
+              
+              <p className="fs-3 mb-5" style={{ 
+                lineHeight: 1.6, 
+                maxWidth: '650px',
+                textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+                fontWeight: '400'
+              }}>
+                Your ultimate guide to New York City's iconic landmarks, hidden gems, and unforgettable experiences. 
+                From Times Square to Central Park, we'll help you see it all! 🗽✨
               </p>
-              <div className="d-flex flex-wrap gap-3">
+              
+              <div className="d-flex flex-wrap gap-3 mb-4">
                 <Button
                   variant="light"
                   size="lg"
                   onClick={() => setCurrentPage('attractions')}
-                  className="px-5 py-3 fw-semibold d-flex align-items-center"
+                  className="px-5 py-3 fw-bold d-flex align-items-center shadow"
                   style={{ 
-                    borderRadius: '15px',
+                    borderRadius: '25px',
                     fontSize: '1.1rem',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    background: 'white',
+                    color: '#667eea'
                   }}
                 >
-                  <Camera className="me-2" size={20} />
-                  Explore Attractions
+                  🎯 Start Exploring
                   <ArrowRight className="ms-2" size={20} />
                 </Button>
                 <Button
                   variant="outline-light"
                   size="lg"
                   onClick={() => setCurrentPage('itinerary')}
-                  className="px-5 py-3 fw-semibold d-flex align-items-center"
+                  className="px-5 py-3 fw-bold d-flex align-items-center"
                   style={{ 
-                    borderRadius: '15px',
+                    borderRadius: '25px',
                     fontSize: '1.1rem',
                     transition: 'all 0.3s ease',
-                    borderWidth: '2px'
+                    borderWidth: '3px',
+                    backdropFilter: 'blur(10px)',
+                    background: 'rgba(255,255,255,0.1)'
                   }}
                 >
-                  <Calendar className="me-2" size={20} />
-                  My Itinerary ({itinerary.length})
+                  📋 Plan Trip ({itinerary.length})
                 </Button>
               </div>
-            </Col>
-            <Col lg={5} className="text-center">
-              <div className="position-relative">
-                <div 
-                  className="rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center"
-                  style={{
-                    width: '300px',
-                    height: '300px',
-                    background: 'rgba(255,255,255,0.1)',
-                    backdropFilter: 'blur(10px)',
-                    border: '2px solid rgba(255,255,255,0.2)'
-                  }}
-                >
-                  <div className="text-center">
-                    <div className="h4">NYC Awaits You</div>
-                    <div className="small opacity-75">Join millions of visitors</div>
+              
+              {/* Tourist Features */}
+              <div className="d-flex flex-wrap gap-4 mt-4">
+                <div className="d-flex align-items-center">
+                  <div className="bg-white rounded-circle p-2 me-2" style={{ width: '40px', height: '40px' }}>
+                    <span style={{ fontSize: '1.2rem' }}>📅</span>
+                  </div>
+                  <div>
+                    <div className="fw-bold small">Trip Planner</div>
+                    <div className="small opacity-80">Custom itineraries</div>
                   </div>
                 </div>
+                <div className="d-flex align-items-center">
+                  <div className="bg-white rounded-circle p-2 me-2" style={{ width: '40px', height: '40px' }}>
+                    <span style={{ fontSize: '1.2rem' }}>⭐</span>
+                  </div>
+                  <div>
+                    <div className="fw-bold small">Top Rated</div>
+                    <div className="small opacity-80">Verified reviews</div>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center">
+                  <div className="bg-white rounded-circle p-2 me-2" style={{ width: '40px', height: '40px' }}>
+                    <span style={{ fontSize: '1.2rem' }}>🎫</span>
+                  </div>
+                  <div>
+                    <div className="fw-bold small">Free to Use</div>
+                    <div className="small opacity-80">No hidden fees</div>
+                  </div>
+                </div>
+              </div>
+            </Col>
+            
+            <Col lg={5} className="text-center">
+              <div className="position-relative">
+                {/* Main Tourist Visual */}
+                <div 
+                  className="mx-auto mb-4 d-flex flex-column align-items-center justify-content-center position-relative"
+                  style={{
+                    width: '320px',
+                    height: '320px',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    border: '3px solid rgba(255,255,255,0.3)',
+                    borderRadius: '30px',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+                  }}
+                >
+                  {/* Tourist Camera */}
+                  <div className="mb-3" style={{ fontSize: '4rem' }}>📸</div>
+                  
+                  <div className="text-center px-3">
+                    <div className="h3 fw-bold mb-2">Ready to Explore?</div>
+                    <div className="mb-3 opacity-90">Join 2M+ happy tourists who discovered NYC with us</div>
+                    
+                    {/* Mini Icons */}
+                    <div className="d-flex justify-content-center gap-3 mb-3">
+                      <div style={{ fontSize: '1.5rem' }}>🗽</div>
+                      <div style={{ fontSize: '1.5rem' }}>🏢</div>
+                      <div style={{ fontSize: '1.5rem' }}>🎭</div>
+                      <div style={{ fontSize: '1.5rem' }}>🌳</div>
+                      <div style={{ fontSize: '1.5rem' }}>🚖</div>
+                    </div>
+                    
+                    <Badge 
+                      className="px-3 py-2"
+                      style={{ 
+                        background: 'rgba(255,230,109,0.9)', 
+                        color: '#333',
+                        borderRadius: '15px',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      ⭐ 4.8/5 Tourist Rating
+                    </Badge>
+                  </div>
+                </div>
+                
+                {/* Floating Elements */}
+                <div className="position-absolute" style={{ top: '10px', right: '10px', fontSize: '2rem', animation: 'float 4s ease-in-out infinite' }}>🎈</div>
+                <div className="position-absolute" style={{ bottom: '10px', left: '10px', fontSize: '2rem', animation: 'float 5s ease-in-out infinite 1s' }}>🗺️</div>
               </div>
             </Col>
           </Row>

@@ -53,6 +53,9 @@ const AppContent = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAttraction, setSelectedAttraction] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Add user reviews state management
+  const [userReviews, setUserReviews] = useState([]);
 
   // Load data from localStorage on component mount
   useEffect(() => {
@@ -84,6 +87,20 @@ const AppContent = () => {
         if (typeof parsedNotes === 'object' && parsedNotes !== null) {
           setNotes(parsedNotes);
           console.log('✅ Loaded notes from localStorage:', parsedNotes);
+        }
+      }
+
+      // Load user reviews
+      const savedReviews = localStorage.getItem('nyc-tourist-reviews');
+      console.log('⭐ Raw saved reviews:', savedReviews);
+      
+      if (savedReviews && savedReviews !== 'null' && savedReviews !== 'undefined') {
+        const parsedReviews = JSON.parse(savedReviews);
+        console.log('⭐ Parsed reviews:', parsedReviews);
+        
+        if (Array.isArray(parsedReviews)) {
+          setUserReviews(parsedReviews);
+          console.log('✅ Loaded reviews from localStorage:', parsedReviews);
         }
       }
 
@@ -152,6 +169,21 @@ const AppContent = () => {
     }
   }, [notes, isInitialized]);
 
+  // Save user reviews to localStorage whenever they change (but only after initialization)
+  useEffect(() => {
+    if (!isInitialized) {
+      console.log('⏳ Skipping reviews save - not yet initialized');
+      return;
+    }
+    
+    try {
+      localStorage.setItem('nyc-tourist-reviews', JSON.stringify(userReviews));
+      console.log('💾 Saved reviews to localStorage:', userReviews);
+    } catch (error) {
+      console.error('❌ Error saving reviews to localStorage:', error);
+    }
+  }, [userReviews, isInitialized]);
+
   // Save itinerary name to localStorage whenever it changes
   useEffect(() => {
     try {
@@ -211,6 +243,21 @@ const AppContent = () => {
 
   const updateNotes = (id, note) => {
     setNotes(prev => ({ ...prev, [id]: note }));
+  };
+
+  // Review actions
+  const addReview = (reviewData) => {
+    const newReview = {
+      ...reviewData,
+      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      isUserReview: true,
+      dateAdded: new Date().toISOString()
+    };
+    setUserReviews(prev => [newReview, ...prev]);
+  };
+
+  const deleteReview = (reviewId) => {
+    setUserReviews(prev => prev.filter(review => review.id !== reviewId));
   };
 
   return (
@@ -277,6 +324,9 @@ const AppContent = () => {
               <ReviewsPage
                 attractions={attractionsData}
                 setSelectedAttraction={setSelectedAttraction}
+                userReviews={userReviews}
+                addReview={addReview}
+                deleteReview={deleteReview}
               />
             } 
           />
@@ -288,7 +338,9 @@ const AppContent = () => {
           attraction={selectedAttraction}
           onClose={() => setSelectedAttraction(null)}
           onAddToItinerary={addToItinerary}
+          onRemoveFromItinerary={removeFromItinerary}
           isInItinerary={itinerary.some(item => item.id === selectedAttraction.id)}
+          userReviews={userReviews}
         />
       )}
 

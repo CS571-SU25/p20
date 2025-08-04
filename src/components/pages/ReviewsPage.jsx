@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Form, Modal, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Badge, Form, Modal, Alert, Pagination } from 'react-bootstrap';
 import { 
   Star, 
   StarFill, 
@@ -10,35 +10,29 @@ import {
   Filter,
   SortDown,
   Search,
-  ExclamationTriangle
+  ExclamationTriangle,
+  ChevronLeft,
+  ChevronRight
 } from "react-bootstrap-icons";
 
-const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
-  // State Management
-  const [userReviews, setUserReviews] = useState([]);
+const ReviewsPage = ({ attractions, setSelectedAttraction, userReviews, addReview, deleteReview }) => {
+  // State Management - removed userReviews state since it's now passed as props
   const [showAddReview, setShowAddReview] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reviewsPerPage] = useState(6); // Number of reviews per page
 
-  // Load user reviews from localStorage on component mount
-  useEffect(() => {
-    const savedReviews = localStorage.getItem('nyc-tourist-reviews');
-    if (savedReviews) {
-      try {
-        setUserReviews(JSON.parse(savedReviews));
-      } catch (error) {
-        console.error('Error loading reviews:', error);
-        setUserReviews([]);
-      }
-    }
-  }, []);
+  // Removed localStorage useEffects since reviews are now managed in App.jsx
 
-  // Save user reviews to localStorage whenever userReviews changes
+  // Reset to first page when filters change
   useEffect(() => {
-    localStorage.setItem('nyc-tourist-reviews', JSON.stringify(userReviews));
-  }, [userReviews]);
+    setCurrentPage(1);
+  }, [selectedCategory, sortBy, searchTerm]);
 
   // Get all reviews (existing + user-added)
   const getAllReviews = () => {
@@ -56,21 +50,14 @@ const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
     return [...existingReviews, ...userReviews];
   };
 
-  // Add new review
-  const addReview = (reviewData) => {
-    const newReview = {
-      ...reviewData,
-      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      isUserReview: true,
-      dateAdded: new Date().toISOString()
-    };
-
-    setUserReviews(prev => [newReview, ...prev]);
+  // Add new review - now uses the prop function
+  const handleAddReview = (reviewData) => {
+    addReview(reviewData); // Use the prop function instead of local state
   };
 
-  // Delete review
-  const deleteReview = (reviewId) => {
-    setUserReviews(prev => prev.filter(review => review.id !== reviewId));
+  // Delete review - now uses the prop function
+  const handleDeleteReview = (reviewId) => {
+    deleteReview(reviewId); // Use the prop function instead of local state
     setShowDeleteConfirm(null);
   };
 
@@ -111,8 +98,110 @@ const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
     return reviews;
   };
 
+  // Get paginated reviews
+  const getPaginatedReviews = () => {
+    const filteredReviews = getFilteredReviews();
+    const indexOfLastReview = currentPage * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    return filteredReviews.slice(indexOfFirstReview, indexOfLastReview);
+  };
+
+  // Calculate pagination info
+  const getPaginationInfo = () => {
+    const filteredReviews = getFilteredReviews();
+    const totalReviews = filteredReviews.length;
+    const totalPages = Math.ceil(totalReviews / reviewsPerPage);
+    const startIndex = (currentPage - 1) * reviewsPerPage + 1;
+    const endIndex = Math.min(currentPage * reviewsPerPage, totalReviews);
+    
+    return { totalReviews, totalPages, startIndex, endIndex };
+  };
+
   const categories = ['all', ...new Set(attractions.map(attr => attr.category))];
   const filteredReviews = getFilteredReviews();
+  const paginatedReviews = getPaginatedReviews();
+  const paginationInfo = getPaginationInfo();
+
+  // Pagination component
+  const PaginationControls = () => {
+    if (paginationInfo.totalPages <= 1) return null;
+
+    const items = [];
+    const maxVisiblePages = 5;
+    
+    // Calculate which pages to show
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(paginationInfo.totalPages, startPage + maxVisiblePages - 1);
+    
+    // Adjust if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    // Previous button
+    items.push(
+      <Pagination.Prev 
+        key="prev"
+        disabled={currentPage === 1}
+        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+      />
+    );
+
+    // First page if not visible
+    if (startPage > 1) {
+      items.push(
+        <Pagination.Item key={1} onClick={() => setCurrentPage(1)}>
+          1
+        </Pagination.Item>
+      );
+      if (startPage > 2) {
+        items.push(<Pagination.Ellipsis key="ellipsis1" />);
+      }
+    }
+
+    // Page numbers
+    for (let page = startPage; page <= endPage; page++) {
+      items.push(
+        <Pagination.Item
+          key={page}
+          active={page === currentPage}
+          onClick={() => setCurrentPage(page)}
+        >
+          {page}
+        </Pagination.Item>
+      );
+    }
+
+    // Last page if not visible
+    if (endPage < paginationInfo.totalPages) {
+      if (endPage < paginationInfo.totalPages - 1) {
+        items.push(<Pagination.Ellipsis key="ellipsis2" />);
+      }
+      items.push(
+        <Pagination.Item 
+          key={paginationInfo.totalPages} 
+          onClick={() => setCurrentPage(paginationInfo.totalPages)}
+        >
+          {paginationInfo.totalPages}
+        </Pagination.Item>
+      );
+    }
+
+    // Next button
+    items.push(
+      <Pagination.Next 
+        key="next"
+        disabled={currentPage === paginationInfo.totalPages}
+        onClick={() => setCurrentPage(prev => Math.min(paginationInfo.totalPages, prev + 1))}
+      />
+    );
+
+    return (
+      <div className="d-flex justify-content-center align-items-center mt-4">
+        <Pagination className="mb-0">{items}</Pagination>
+      </div>
+    );
+  };
 
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', paddingBottom: '80px' }}>
@@ -285,6 +374,9 @@ const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
             <p className="text-muted mb-0">
               {selectedCategory !== 'all' && `in ${selectedCategory} • `}
               Sorted by {sortBy.replace('-', ' ')}
+              {paginationInfo.totalReviews > 0 && (
+                <span> • Showing {paginationInfo.startIndex}-{paginationInfo.endIndex} of {paginationInfo.totalReviews}</span>
+              )}
             </p>
           </div>
           
@@ -300,17 +392,32 @@ const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
         </div>
 
         {/* Reviews Display */}
-        {filteredReviews.length > 0 ? (
-          <Row className="g-4">
-            {filteredReviews.map((review) => (
-              <Col key={review.id} lg={12}>
-                <ReviewCard 
-                  review={review}
-                  onDelete={review.isUserReview ? () => setShowDeleteConfirm(review.id) : null}
-                />
-              </Col>
-            ))}
-          </Row>
+        {paginatedReviews.length > 0 ? (
+          <>
+            <Row className="g-4">
+              {paginatedReviews.map((review) => (
+                <Col key={review.id} lg={12}>
+                  <ReviewCard 
+                    review={review}
+                    onDelete={review.isUserReview ? () => setShowDeleteConfirm(review.id) : null}
+                  />
+                </Col>
+              ))}
+            </Row>
+            
+            {/* Pagination Controls */}
+            <PaginationControls />
+            
+            {/* Pagination Summary */}
+            {paginationInfo.totalPages > 1 && (
+              <div className="text-center mt-3">
+                <small className="text-muted">
+                  Page {currentPage} of {paginationInfo.totalPages} 
+                  ({paginationInfo.startIndex}-{paginationInfo.endIndex} of {paginationInfo.totalReviews} reviews)
+                </small>
+              </div>
+            )}
+          </>
         ) : (
           <Card className="border-0 shadow-sm text-center py-5" style={{ borderRadius: '16px' }}>
             <Card.Body>
@@ -341,7 +448,7 @@ const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
         show={showAddReview}
         onHide={() => setShowAddReview(false)}
         attractions={attractions}
-        onAddReview={addReview}
+        onAddReview={handleAddReview}
       />
 
       {/* Delete Confirmation Modal */}
@@ -361,7 +468,7 @@ const ReviewsPage = ({ attractions, setSelectedAttraction }) => {
           </Button>
           <Button 
             variant="danger" 
-            onClick={() => deleteReview(showDeleteConfirm)}
+            onClick={() => handleDeleteReview(showDeleteConfirm)}
             className="d-flex align-items-center"
           >
             <Trash3 size={16} className="me-2" />
