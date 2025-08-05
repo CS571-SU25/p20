@@ -522,7 +522,7 @@ const ReviewCard = ({ review, onDelete }) => {
           <div className="flex-grow-1">
             <div className="d-flex align-items-center justify-content-between mb-2">
               <div>
-                <h6 className="mb-1 fw-bold">{review.user}</h6>
+                <h2 className="mb-1 fw-bold">{review.user}</h2>
                 <div className="d-flex align-items-center gap-2">
                   <Badge 
                     bg={review.isUserReview ? "success" : "light"} 

@@ -8,7 +8,7 @@ const WeatherWidget = () => {
 
   useEffect(() => {
     // Your actual OpenWeatherMap API key
-const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+    const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
     // Weather API Call
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=New%20York&appid=${API_KEY}&units=imperial`)
@@ -77,7 +77,7 @@ const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
     return (
       <div className="card bg-primary text-white p-3 shadow">
         <div className="d-flex justify-content-center">
-          <div className="spinner-border text-light" role="status">
+          <div className="spinner-border text-white" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -87,19 +87,21 @@ const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
   }
 
   const getWeatherIcon = (condition) => {
+    const iconProps = { size: 32, role: "img" };
+    
     switch(condition.toLowerCase()) {
       case 'clear':
       case 'sunny': 
-        return <Sun className="text-warning" size={32} />;
+        return <Sun {...iconProps} className="text-warning" aria-label="Sunny weather" />;
       case 'rain':
       case 'drizzle':
-        return <CloudRain className="text-info" size={32} />;
+        return <CloudRain {...iconProps} className="text-white" aria-label="Rainy weather" />;
       case 'clouds':
       case 'partly cloudy':
       case 'mist':
       case 'haze':
       default: 
-        return <Cloud className="text-light" size={32} />;
+        return <Cloud {...iconProps} className="text-white" aria-label="Cloudy weather" />;
     }
   };
 
@@ -108,22 +110,22 @@ const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
       {/* Weather Widget */}
       <div className="card bg-primary text-white shadow">
         <div className="card-body">
-          <h5 className="card-title fw-bold">NYC Weather Today</h5>
+          <h1 className="card-title fw-bold h5 mb-3">NYC Weather Today</h1>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div>
               <div className="display-6 fw-bold">{weather.temperature}°F</div>
-              <div className="text-light text-capitalize">{weather.description || weather.condition}</div>
+              <div className="text-white opacity-75 text-capitalize">{weather.description || weather.condition}</div>
             </div>
             <div className="text-end">
               {getWeatherIcon(weather.condition)}
-              <div className="small text-light mt-2">
+              <div className="small text-white opacity-75 mt-2">
                 Humidity: {weather.humidity}%<br />
                 Wind: {weather.windSpeed} mph
               </div>
             </div>
           </div>
           <hr className="border-light opacity-50" />
-          <h6 className="fw-semibold mb-2">3-Day Forecast</h6>
+          <h2 className="fw-semibold mb-2 h6">3-Day Forecast</h2>
           <div>
             {weather.forecast.map((day, index) => (
               <div key={index} className="d-flex justify-content-between small mb-1">
@@ -138,13 +140,15 @@ const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
       {/* NYC Events Widget */}
       <div className="card bg-success text-white shadow">
         <div className="card-body">
-          <h5 className="card-title fw-bold">NYC Events Today</h5>
+          <h1 className="card-title fw-bold h5 mb-3">NYC Events Today</h1>
           <div>
             {events.length > 0 ? (
               events.map((event, index) => (
                 <div key={index} className="d-flex justify-content-between small mb-2">
-                  <span>🎭 {event.event_name || `NYC Event ${index + 1}`}</span>
-                  <span className="text-light">
+                  <span>
+                    <span role="img" aria-label="Theater mask">🎭</span> {event.event_name || `NYC Event ${index + 1}`}
+                  </span>
+                  <span className="text-white opacity-75">
                     {event.start_date_time || 'All Day'}
                   </span>
                 </div>
@@ -152,16 +156,22 @@ const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
             ) : (
               <>
                 <div className="d-flex justify-content-between small mb-2">
-                  <span>🎭 Broadway Show</span>
-                  <span className="text-light">8:00 PM</span>
+                  <span>
+                    <span role="img" aria-label="Theater mask">🎭</span> Broadway Show
+                  </span>
+                  <span className="text-white opacity-75">8:00 PM</span>
                 </div>
                 <div className="d-flex justify-content-between small mb-2">
-                  <span>🎨 Art Exhibition Opening</span>
-                  <span className="text-light">10:00 AM</span>
+                  <span>
+                    <span role="img" aria-label="Artist palette">🎨</span> Art Exhibition Opening
+                  </span>
+                  <span className="text-white opacity-75">10:00 AM</span>
                 </div>
                 <div className="d-flex justify-content-between small mb-2">
-                  <span>🎵 Central Park Concert</span>
-                  <span className="text-light">6:00 PM</span>
+                  <span>
+                    <span role="img" aria-label="Musical note">🎵</span> Central Park Concert
+                  </span>
+                  <span className="text-white opacity-75">6:00 PM</span>
                 </div>
               </>
             )}

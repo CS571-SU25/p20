@@ -7,8 +7,8 @@ const RatingDisplay = ({ rating, showValue = true, size = 16 }) => {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     stars.push(
-      i <= rating ? 
-        <StarFill key={i} className="text-warning" size={size} /> : 
+      i <= rating ?
+        <StarFill key={i} className="text-warning" size={size} /> :
         <Star key={i} className="text-muted" size={size} />
     );
   }
@@ -23,11 +23,11 @@ const RatingDisplay = ({ rating, showValue = true, size = 16 }) => {
 
 // Enhanced Stats Card Component
 const StatCard = ({ icon, value, label, color = "primary", trend, subtitle, progress }) => (
-  <Card 
-    className="border-0 h-100 shadow-sm position-relative overflow-hidden" 
-    style={{ 
+  <Card
+    className="border-0 h-100 shadow-sm position-relative overflow-hidden"
+    style={{
       borderRadius: '20px',
-      background: `linear-gradient(135deg, var(--bs-${color}) 0%, var(--bs-${color}) 100%)`, 
+      background: `linear-gradient(135deg, var(--bs-${color}) 0%, var(--bs-${color}) 100%)`,
       color: 'white',
       transition: 'transform 0.3s ease, box-shadow 0.3s ease'
     }}
@@ -57,17 +57,17 @@ const StatCard = ({ icon, value, label, color = "primary", trend, subtitle, prog
       {subtitle && <div className="small opacity-75">{subtitle}</div>}
       {progress && (
         <div className="mt-3">
-          <ProgressBar 
-            now={progress} 
-            variant="light" 
+          <ProgressBar
+            now={progress}
+            variant="light"
             style={{ height: '4px', backgroundColor: 'rgba(255,255,255,0.3)' }}
           />
         </div>
       )}
     </Card.Body>
-    
+   
     {/* Decorative background pattern */}
-    <div 
+    <div
       className="position-absolute"
       style={{
         top: '-20px',
@@ -94,9 +94,9 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
   };
 
   return (
-    <Card 
-      className="border-0 shadow-sm h-100 position-relative" 
-      style={{ 
+    <Card
+      className="border-0 shadow-sm h-100 position-relative"
+      style={{
         borderRadius: '20px',
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         cursor: 'pointer',
@@ -112,7 +112,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
       }}
     >
       {/* Rank Badge */}
-      <div 
+      <div
         className="position-absolute d-flex align-items-center justify-content-center fw-bold"
         style={{
           top: '15px',
@@ -135,7 +135,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
           src={attraction.image}
           alt={`${attraction.name} - Top rated ${attraction.category.toLowerCase()} attraction in NYC`}
           className="w-100 h-100"
-          style={{ 
+          style={{
             objectFit: 'cover',
             transition: 'transform 0.4s ease'
           }}
@@ -146,9 +146,9 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
             e.currentTarget.style.transform = 'scale(1)';
           }}
         />
-        
+       
         {/* Enhanced Gradient Overlay */}
-        <div 
+        <div
           className="position-absolute w-100 h-100"
           style={{
             top: 0,
@@ -158,12 +158,12 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
         />
 
         {/* Multiple overlays for visual depth */}
-        <Badge 
+        <Badge
           className="position-absolute"
-          style={{ 
+          style={{
             bottom: '60px',
             left: '15px',
-            backgroundColor: 'rgba(255,255,255,0.95)', 
+            backgroundColor: 'rgba(255,255,255,0.95)',
             color: '#333',
             borderRadius: '12px',
             padding: '8px 12px',
@@ -175,8 +175,8 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
           <GeoAlt size={12} className="me-1" />
           {attraction.category}
         </Badge>
-        
-        <div 
+       
+        <div
           className="position-absolute d-flex align-items-center"
           style={{
             bottom: '15px',
@@ -191,10 +191,10 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
           <span className="small">{attraction.duration}</span>
         </div>
       </div>
-      
+     
       <Card.Body className="p-4 d-flex flex-column">
         <div className="mb-3">
-         <h3 className="h5 fw-bold text-dark mb-2 lh-sm">{attraction.name}</h3>
+          <h5 className="fw-bold text-dark mb-2 lh-sm">{attraction.name}</h5>
           
           <p className="text-muted small mb-0" style={{ 
             display: '-webkit-box',
@@ -206,7 +206,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
             {attraction.description}
           </p>
         </div>
-        
+       
         <div className="mt-auto">
           <div className="d-flex gap-2">
             <Button
@@ -214,7 +214,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
               size="sm"
               onClick={() => onViewDetails(attraction)}
               className="flex-grow-1 fw-semibold"
-              style={{ 
+              style={{
                 borderRadius: '10px',
                 borderWidth: '2px',
                 transition: 'all 0.3s ease'
@@ -228,7 +228,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
               size="sm"
               onClick={handleItineraryAction}
               className="fw-bold d-flex align-items-center justify-content-center"
-              style={{ 
+              style={{
                 borderRadius: '10px',
                 minWidth: '50px',
                 transition: 'all 0.3s ease'
@@ -245,9 +245,9 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
 
 // Enhanced Weather Widget
 const WeatherWidget = () => (
-  <Card 
-    className="border-0 text-white h-100 shadow-sm position-relative overflow-hidden" 
-    style={{ 
+  <Card
+    className="border-0 text-white h-100 shadow-sm position-relative overflow-hidden"
+    style={{
       borderRadius: '20px',
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       transition: 'transform 0.3s ease'
@@ -260,7 +260,7 @@ const WeatherWidget = () => (
     }}
   >
     {/* Background pattern */}
-    <div 
+    <div
       className="position-absolute"
       style={{
         top: '-50px',
@@ -272,7 +272,7 @@ const WeatherWidget = () => (
         transform: 'rotate(45deg)'
       }}
     />
-    
+   
     <Card.Body className="p-4 position-relative">
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
@@ -285,7 +285,7 @@ const WeatherWidget = () => (
         </div>
         <div style={{ fontSize: '3.5rem', opacity: 0.8 }}>☀️</div>
       </div>
-      
+     
       <div className="row g-3 mb-4 small">
         <div className="col-4 text-center">
           <div className="opacity-80">Humidity</div>
@@ -300,9 +300,9 @@ const WeatherWidget = () => (
           <div className="fw-bold">6</div>
         </div>
       </div>
-      
+     
       <hr className="my-3 opacity-30" />
-      
+     
       <div className="small">
        <h4 className="h6 mb-3 opacity-90">3-Day Forecast</h4>
         <div className="d-flex justify-content-between align-items-center mb-2">
@@ -325,7 +325,7 @@ const WeatherWidget = () => (
 // NYC Travel Tips Card
 const TravelTipsCard = () => (
   <Card className="border-0 shadow-sm h-100" style={{ borderRadius: '20px' }}>
-    <Card.Header 
+    <Card.Header
       className="border-0 bg-transparent pt-4 pb-2"
       style={{ borderRadius: '20px 20px 0 0' }}
     >
@@ -337,7 +337,7 @@ const TravelTipsCard = () => (
     <Card.Body className="pt-2">
       <div className="mb-4">
         <div className="d-flex align-items-start mb-3">
-          <div 
+          <div
             className="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3"
             style={{ width: '36px', height: '36px', minWidth: '36px' }}
           >
@@ -349,10 +349,10 @@ const TravelTipsCard = () => (
           </div>
         </div>
       </div>
-      
+     
       <div className="mb-4">
         <div className="d-flex align-items-start mb-3">
-          <div 
+          <div
             className="rounded-circle bg-success d-flex align-items-center justify-content-center me-3"
             style={{ width: '36px', height: '36px', minWidth: '36px' }}
           >
@@ -364,10 +364,10 @@ const TravelTipsCard = () => (
           </div>
         </div>
       </div>
-      
+     
       <div className="mb-4">
         <div className="d-flex align-items-start mb-3">
-          <div 
+          <div
             className="rounded-circle bg-warning d-flex align-items-center justify-content-center me-3"
             style={{ width: '36px', height: '36px', minWidth: '36px' }}
           >
@@ -382,7 +382,7 @@ const TravelTipsCard = () => (
 
       <div>
         <div className="d-flex align-items-start mb-3">
-          <div 
+          <div
             className="rounded-circle bg-info d-flex align-items-center justify-content-center me-3"
             style={{ width: '36px', height: '36px', minWidth: '36px' }}
           >
@@ -415,13 +415,13 @@ const PopularNeighborhoodsSection = ({ setCurrentPage }) => {
         <h2 className="h2 fw-bold text-dark mb-2">Explore by Neighborhood</h2>
         <p className="text-muted fs-5">Discover NYC's unique districts and their character</p>
       </div>
-      
+     
       <Row className="g-3">
         {neighborhoods.map((neighborhood, index) => (
           <Col key={neighborhood.name} xs={6} md={4} lg={2}>
-            <Card 
+            <Card
               className="border-0 shadow-sm h-100 text-center"
-              style={{ 
+              style={{
                 borderRadius: '16px',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
@@ -459,7 +459,7 @@ const PopularNeighborhoodsSection = ({ setCurrentPage }) => {
 const NYCFactsSection = () => (
   <Card className="border-0 shadow-sm position-relative overflow-hidden" style={{ borderRadius: '20px' }}>
     {/* Background decoration */}
-    <div 
+    <div
       className="position-absolute"
       style={{
         top: '-100px',
@@ -470,7 +470,7 @@ const NYCFactsSection = () => (
         background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)'
       }}
     />
-    
+   
     <Card.Body className="p-5 position-relative">
       <div className="text-center mb-4">
         <h2 className="h4 fw-bold text-dark mb-2 d-flex align-items-center justify-content-center">
@@ -479,7 +479,7 @@ const NYCFactsSection = () => (
 </h2>
         <p className="text-muted">The city that never sleeps in statistics</p>
       </div>
-      
+     
       <Row className="g-4">
         <Col md={3} className="text-center">
           <div className="mb-3">
@@ -510,7 +510,7 @@ const NYCFactsSection = () => (
           </div>
         </Col>
       </Row>
-      
+     
       <Row className="mt-4 pt-4 border-top">
         <Col md={6}>
           <div className="d-flex align-items-center mb-3">
@@ -541,9 +541,9 @@ const NYCFactsSection = () => (
 
 // NYC Events Widget
 const NYCEventsWidget = () => (
-  <Card 
-    className="border-0 text-white h-100 shadow-sm position-relative overflow-hidden" 
-    style={{ 
+  <Card
+    className="border-0 text-white h-100 shadow-sm position-relative overflow-hidden"
+    style={{
       borderRadius: '20px',
       background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
       transition: 'transform 0.3s ease'
@@ -556,7 +556,7 @@ const NYCEventsWidget = () => (
     }}
   >
     {/* Background pattern */}
-    <div 
+    <div
       className="position-absolute"
       style={{
         top: '-50px',
@@ -568,7 +568,7 @@ const NYCEventsWidget = () => (
         transform: 'rotate(45deg)'
       }}
     />
-    
+   
     <Card.Body className="p-4 position-relative">
       <h3 className="h5 fw-bold mb-4 d-flex align-items-center">
   <Calendar className="me-2" size={20} />
@@ -621,7 +621,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       {/* Tourist-Focused Hero Section */}
-      <div style={{ 
+      <div style={{
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         color: 'white',
         padding: '120px 0 100px',
@@ -629,7 +629,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
         overflow: 'hidden'
       }}>
         {/* NYC Skyline Silhouette Background */}
-        <div 
+        <div
           className="position-absolute w-100"
           style={{
             bottom: 0,
@@ -640,7 +640,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
             backgroundRepeat: 'no-repeat'
           }}
         />
-        
+       
         {/* Floating NYC Icons */}
         <div className="position-absolute w-100 h-100" style={{ top: 0, left: 0 }}>
           <div style={{ position: 'absolute', top: '15%', left: '8%', fontSize: '5rem', opacity: 0.3, animation: 'float 8s ease-in-out infinite' }}>🗽</div>
@@ -651,15 +651,15 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
           <div style={{ position: 'absolute', top: '70%', right: '10%', fontSize: '2rem', opacity: 0.2, animation: 'float 5s ease-in-out infinite 1.5s' }}>🎭</div>
           <div style={{ position: 'absolute', top: '50%', right: '35%', fontSize: '3.5rem', opacity: 0.25, animation: 'float 7s ease-in-out infinite 4s' }}>🗽</div>
         </div>
-        
+       
         <Container className="position-relative">
           <Row className="align-items-center">
             <Col lg={7}>
               <div className="mb-4">
-                <Badge 
+                <Badge
                   className="mb-3 px-3 py-2 fs-6"
-                  style={{ 
-                    background: 'rgba(255,255,255,0.2)', 
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
                     color: 'white',
                     borderRadius: '25px',
                     backdropFilter: 'blur(10px)'
@@ -668,33 +668,33 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                   🌟 #1 NYC Tourist Guide
                 </Badge>
               </div>
-              
-              <h1 className="display-1 fw-bold mb-4" style={{ 
-                letterSpacing: '-0.02em', 
+             
+              <h1 className="display-1 fw-bold mb-4" style={{
+                letterSpacing: '-0.02em',
                 lineHeight: '1.1',
                 textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
               }}>
-                Welcome to the 
+                Welcome to the
                 <span className="d-block" style={{ color: '#FFE66D' }}>Big Apple!</span>
               </h1>
-              
-              <p className="fs-3 mb-5" style={{ 
-                lineHeight: 1.6, 
+             
+              <p className="fs-3 mb-5" style={{
+                lineHeight: 1.6,
                 maxWidth: '650px',
                 textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
                 fontWeight: '400'
               }}>
-                Your ultimate guide to New York City's iconic landmarks, hidden gems, and unforgettable experiences. 
+                Your ultimate guide to New York City's iconic landmarks, hidden gems, and unforgettable experiences.
                 From Times Square to Central Park, we'll help you see it all! 🗽✨
               </p>
-              
+             
               <div className="d-flex flex-wrap gap-3 mb-4">
                 <Button
                   variant="light"
                   size="lg"
                   onClick={() => setCurrentPage('attractions')}
                   className="px-5 py-3 fw-bold d-flex align-items-center shadow"
-                  style={{ 
+                  style={{
                     borderRadius: '25px',
                     fontSize: '1.1rem',
                     transition: 'all 0.3s ease',
@@ -710,7 +710,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                   size="lg"
                   onClick={() => setCurrentPage('itinerary')}
                   className="px-5 py-3 fw-bold d-flex align-items-center"
-                  style={{ 
+                  style={{
                     borderRadius: '25px',
                     fontSize: '1.1rem',
                     transition: 'all 0.3s ease',
@@ -722,7 +722,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                   📋 Plan Trip ({itinerary.length})
                 </Button>
               </div>
-              
+             
               {/* Tourist Features */}
               <div className="d-flex flex-wrap gap-4 mt-4">
                 <div className="d-flex align-items-center">
@@ -754,11 +754,11 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                 </div>
               </div>
             </Col>
-            
+           
             <Col lg={5} className="text-center">
               <div className="position-relative">
                 {/* Main Tourist Visual */}
-                <div 
+                <div
                   className="mx-auto mb-4 d-flex flex-column align-items-center justify-content-center position-relative"
                   style={{
                     width: '320px',
@@ -772,11 +772,11 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                 >
                   {/* Tourist Camera */}
                   <div className="mb-3" style={{ fontSize: '4rem' }}>📸</div>
-                  
+                 
                   <div className="text-center px-3">
                     <div className="h3 fw-bold mb-2">Ready to Explore?</div>
                     <div className="mb-3 opacity-90">Join 2M+ happy tourists who discovered NYC with us</div>
-                    
+                   
                     {/* Mini Icons */}
                     <div className="d-flex justify-content-center gap-3 mb-3">
                       <div style={{ fontSize: '1.5rem' }}>🗽</div>
@@ -785,11 +785,11 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                       <div style={{ fontSize: '1.5rem' }}>🌳</div>
                       <div style={{ fontSize: '1.5rem' }}>🚖</div>
                     </div>
-                    
-                    <Badge 
+                   
+                    <Badge
                       className="px-3 py-2"
-                      style={{ 
-                        background: 'rgba(255,230,109,0.9)', 
+                      style={{
+                        background: 'rgba(255,230,109,0.9)',
                         color: '#333',
                         borderRadius: '15px',
                         fontWeight: 'bold'
@@ -799,7 +799,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                     </Badge>
                   </div>
                 </div>
-                
+               
                 {/* Floating Elements */}
                 <div className="position-absolute" style={{ top: '10px', right: '10px', fontSize: '2rem', animation: 'float 4s ease-in-out infinite' }}>🎈</div>
                 <div className="position-absolute" style={{ bottom: '10px', left: '10px', fontSize: '2rem', animation: 'float 5s ease-in-out infinite 1s' }}>🗺️</div>
@@ -878,7 +878,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
                   <ArrowRight className="ms-2" size={16} />
                 </Button>
               </div>
-              
+             
               <Row className="g-4">
                 {featuredAttractions.map((attraction, index) => (
                   <Col key={attraction.id} md={4}>
@@ -912,7 +912,7 @@ const HomePage = ({ attractions, itinerary, addToItinerary, removeFromItinerary,
           </Col>
         </Row>
       </Container>
-      
+     
       {/* Add CSS animations */}
       <style jsx>{`
         @keyframes float {

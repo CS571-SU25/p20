@@ -13,13 +13,13 @@ const StatsDashboard = ({ attractions, itinerary }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">Total Attractions</h3>
+        <h1 className="text-lg font-semibold text-gray-800 mb-2">Total Attractions</h1>
         <p className="text-3xl font-bold text-blue-600">{attractions.length}</p>
         <p className="text-sm text-gray-500 mt-1">Available to visit</p>
       </div>
       
       <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">In Your Itinerary</h3>
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">In Your Itinerary</h2>
         <p className="text-3xl font-bold text-green-600">{itinerary.length}</p>
         <p className="text-sm text-gray-500 mt-1">Attractions selected</p>
       </div>
@@ -31,7 +31,7 @@ const StatsDashboard = ({ attractions, itinerary }) => {
       </div>
       
       <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">Planned Time</h3>
+        <h4 className="text-lg font-semibold text-gray-800 mb-2">Planned Time</h4>
         <p className="text-3xl font-bold text-purple-600">{calculateTotalTime()}h</p>
         <p className="text-sm text-gray-500 mt-1">Total visit time</p>
       </div>
