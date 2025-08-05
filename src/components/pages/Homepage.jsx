@@ -194,7 +194,7 @@ const FeaturedAttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItin
       
       <Card.Body className="p-4 d-flex flex-column">
         <div className="mb-3">
-          <h5 className="fw-bold text-dark mb-2 lh-sm">{attraction.name}</h5>
+         <h3 className="h5 fw-bold text-dark mb-2 lh-sm">{attraction.name}</h3>
           
           <p className="text-muted small mb-0" style={{ 
             display: '-webkit-box',
@@ -276,10 +276,10 @@ const WeatherWidget = () => (
     <Card.Body className="p-4 position-relative">
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
-          <h6 className="mb-2 opacity-90 d-flex align-items-center">
-            <Thermometer className="me-2" size={18} />
-            NYC Weather
-          </h6>
+          <h3 className="h6 mb-2 opacity-90 d-flex align-items-center">
+         <Thermometer className="me-2" size={18} />
+         NYC Weather
+         </h3>
           <div className="h1 fw-bold mb-0">72°F</div>
           <p className="mb-0 opacity-90">Partly Cloudy</p>
         </div>
@@ -304,7 +304,7 @@ const WeatherWidget = () => (
       <hr className="my-3 opacity-30" />
       
       <div className="small">
-        <h6 className="mb-3 opacity-90">3-Day Forecast</h6>
+       <h4 className="h6 mb-3 opacity-90">3-Day Forecast</h4>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <span className="fw-semibold">Today</span>
           <span>🌤️ 75°/65°</span>
@@ -329,10 +329,10 @@ const TravelTipsCard = () => (
       className="border-0 bg-transparent pt-4 pb-2"
       style={{ borderRadius: '20px 20px 0 0' }}
     >
-      <h5 className="fw-bold text-dark mb-0 d-flex align-items-center">
-        <Award className="me-2 text-warning" size={20} />
-        Travel Tips
-      </h5>
+      <h3 className="h5 fw-bold text-dark mb-0 d-flex align-items-center">
+       <Award className="me-2 text-warning" size={20} />
+      Travel Tips
+    </h3>
     </Card.Header>
     <Card.Body className="pt-2">
       <div className="mb-4">
@@ -344,7 +344,7 @@ const TravelTipsCard = () => (
             <Clock className="text-white" size={16} />
           </div>
           <div>
-            <div className="fw-semibold text-dark mb-1">Best Times to Visit</div>
+            <h4 className="h6 fw-semibold text-dark mb-1">Best Times to Visit</h4>
             <p className="small text-muted mb-0">Early morning (8-10 AM) for popular attractions, avoid 12-3 PM crowds</p>
           </div>
         </div>
@@ -359,7 +359,7 @@ const TravelTipsCard = () => (
             <People className="text-white" size={16} />
           </div>
           <div>
-            <div className="fw-semibold text-dark mb-1">Transportation</div>
+            <h4 className="h6 fw-semibold text-dark mb-1">Transportation</h4>
             <p className="small text-muted mb-0">MetroCard for subway/bus. Walking between nearby attractions saves time</p>
           </div>
         </div>
@@ -374,7 +374,7 @@ const TravelTipsCard = () => (
             <Globe className="text-white" size={16} />
           </div>
           <div>
-            <div className="fw-semibold text-dark mb-1">Local Insights</div>
+            <h4 className="h6 fw-semibold text-dark mb-1">Local Insights</h4>
             <p className="small text-muted mb-0">Many museums offer "pay-what-you-wish" hours for NY residents</p>
           </div>
         </div>
@@ -389,7 +389,7 @@ const TravelTipsCard = () => (
             <Building className="text-white" size={16} />
           </div>
           <div>
-            <div className="fw-semibold text-dark mb-1">Book Ahead</div>
+              <h4 className="h6 fw-semibold text-dark mb-1">Book Ahead</h4>
             <p className="small text-muted mb-0">Reserve tickets for Empire State Building, Statue of Liberty in advance</p>
           </div>
         </div>
@@ -439,7 +439,7 @@ const PopularNeighborhoodsSection = ({ setCurrentPage }) => {
             >
               <Card.Body className="p-3">
                 <div className="mb-2" style={{ fontSize: '2.5rem' }}>{neighborhood.emoji}</div>
-                <h6 className="fw-bold text-dark mb-1">{neighborhood.name}</h6>
+<h3 className="h6 fw-bold text-dark mb-1">{neighborhood.name}</h3>
                 <div className="small text-muted mb-2">{neighborhood.description}</div>
                 <div className="small">
                   <Badge bg="primary" className="small">
@@ -473,10 +473,10 @@ const NYCFactsSection = () => (
     
     <Card.Body className="p-5 position-relative">
       <div className="text-center mb-4">
-        <h4 className="fw-bold text-dark mb-2 d-flex align-items-center justify-content-center">
-          <People className="me-2 text-primary" size={24} />
-          NYC by the Numbers
-        </h4>
+        <h2 className="h4 fw-bold text-dark mb-2 d-flex align-items-center justify-content-center">
+  <People className="me-2 text-primary" size={24} />
+  NYC by the Numbers
+</h2>
         <p className="text-muted">The city that never sleeps in statistics</p>
       </div>
       
@@ -484,28 +484,28 @@ const NYCFactsSection = () => (
         <Col md={3} className="text-center">
           <div className="mb-3">
             <div className="h1 fw-bold text-primary mb-1">8.3M</div>
-            <div className="h6 text-muted mb-2">Population</div>
+            <h3 className="h6 text-muted mb-2">Population</h3>
             <ProgressBar now={85} variant="primary" style={{ height: '4px' }} />
           </div>
         </Col>
         <Col md={3} className="text-center">
           <div className="mb-3">
             <div className="h1 fw-bold text-success mb-1">65M</div>
-            <div className="h6 text-muted mb-2">Annual Visitors</div>
+            <h3 className="h6 text-muted mb-2">Annual Visitors</h3>
             <ProgressBar now={90} variant="success" style={{ height: '4px' }} />
           </div>
         </Col>
         <Col md={3} className="text-center">
           <div className="mb-3">
             <div className="h1 fw-bold text-warning mb-1">500+</div>
-            <div className="h6 text-muted mb-2">Museums</div>
+            <h3 className="h6 text-muted mb-2">Museums</h3>
             <ProgressBar now={75} variant="warning" style={{ height: '4px' }} />
           </div>
         </Col>
         <Col md={3} className="text-center">
           <div className="mb-3">
             <div className="h1 fw-bold text-info mb-1">1,700</div>
-            <div className="h6 text-muted mb-2">Parks</div>
+            <h3 className="h6 text-muted mb-2">Parks</h3>
             <ProgressBar now={80} variant="info" style={{ height: '4px' }} />
           </div>
         </Col>
@@ -518,7 +518,7 @@ const NYCFactsSection = () => (
               <Building className="text-white" size={16} />
             </div>
             <div>
-              <div className="fw-semibold">World's Financial Capital</div>
+              <h3 className="h6 fw-semibold">World's Financial Capital</h3>
               <small className="text-muted">Home to NYSE and major banks</small>
             </div>
           </div>
@@ -529,7 +529,7 @@ const NYCFactsSection = () => (
               <Globe className="text-white" size={16} />
             </div>
             <div>
-              <div className="fw-semibold">Cultural Melting Pot</div>
+              <h3 className="h6 fw-semibold">Cultural Melting Pot</h3>
               <small className="text-muted">200+ languages spoken daily</small>
             </div>
           </div>
@@ -570,35 +570,35 @@ const NYCEventsWidget = () => (
     />
     
     <Card.Body className="p-4 position-relative">
-      <h5 className="fw-bold mb-4 d-flex align-items-center">
-        <Calendar className="me-2" size={20} />
-        Today's Events
-      </h5>
+      <h3 className="h5 fw-bold mb-4 d-flex align-items-center">
+  <Calendar className="me-2" size={20} />
+  Today's Events
+</h3>
       <div className="d-flex flex-column gap-3">
         <div className="d-flex align-items-center justify-content-between">
           <div>
-            <div className="fw-semibold">⚾ Yankees vs Red Sox</div>
+            <h4 className="h6 fw-semibold">⚾ Yankees vs Red Sox</h4>
             <small className="opacity-80">Yankee Stadium • 7:00 PM</small>
           </div>
           <Badge bg="light" text="dark" className="small">Sports</Badge>
         </div>
         <div className="d-flex align-items-center justify-content-between">
           <div>
-            <div className="fw-semibold">🎭 Broadway Show</div>
+           <h4 className="h6 fw-semibold">🎭 Broadway Show</h4>
             <small className="opacity-80">Times Square • 8:00 PM</small>
           </div>
           <Badge bg="light" text="dark" className="small">Theater</Badge>
         </div>
         <div className="d-flex align-items-center justify-content-between">
           <div>
-            <div className="fw-semibold">🎨 Art Gallery Opening</div>
+           <h4 className="h6 fw-semibold">🎨 Art Gallery Opening</h4>
             <small className="opacity-80">SoHo • 6:00 PM</small>
           </div>
           <Badge bg="light" text="dark" className="small">Art</Badge>
         </div>
         <div className="d-flex align-items-center justify-content-between">
           <div>
-            <div className="fw-semibold">🎵 Jazz Night</div>
+            <h4 className="h6 fw-semibold">🎵 Jazz Night</h4>
             <small className="opacity-80">Blue Note • 9:00 PM</small>
           </div>
           <Badge bg="light" text="dark" className="small">Music</Badge>
