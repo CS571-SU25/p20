@@ -100,9 +100,9 @@ const AttractionCard = ({ attraction, onAddToItinerary, onRemoveFromItinerary, i
       {/* Content Section */}
       <Card.Body className="d-flex flex-column p-4">
         <div className="mb-3" onClick={() => onViewDetails(attraction)}>
-          <h5 className="fw-bold text-dark mb-2 lh-sm" style={{ fontSize: '1.1rem' }}>
+          <h1 className="fw-bold text-dark mb-2 lh-sm" style={{ fontSize: '1.1rem' }}>
             {attraction.name}
-          </h5>
+          </h1>
           
           <div className="d-flex align-items-center mb-2 text-muted">
             <RatingDisplay rating={attraction.rating} />

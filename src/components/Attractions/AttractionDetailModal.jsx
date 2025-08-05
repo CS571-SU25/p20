@@ -264,7 +264,7 @@ const AttractionDetailModal = ({ attraction, onClose, onAddToItinerary, isInItin
                 <Row className="g-4">
                   <Col lg={8}>
                     <div className="mb-4">
-                      <h5 className="fw-bold mb-3 text-dark">About This Attraction</h5>
+                      <h1 className="fw-bold mb-3 text-dark">About This Attraction</h1>
                       <p className="lead text-dark mb-4" style={{ lineHeight: '1.7' }}>
                         {attraction.description}
                       </p>
@@ -387,10 +387,10 @@ const AttractionDetailModal = ({ attraction, onClose, onAddToItinerary, isInItin
                   <Col lg={6}>
                     <Card className="border-0 shadow-sm h-100" style={{ borderRadius: '12px' }}>
                       <Card.Body className="p-4">
-                        <h5 className="fw-bold mb-4 text-primary d-flex align-items-center">
+                        <h2 className="fw-bold mb-4 text-primary d-flex align-items-center">
                           <Clock size={20} className="me-2" />
                           Hours & Contact
-                        </h5>
+                        </h2>
                         
                         <div className="mb-4">
                           <div className="d-flex align-items-center mb-3">
@@ -431,10 +431,10 @@ const AttractionDetailModal = ({ attraction, onClose, onAddToItinerary, isInItin
                   <Col lg={6}>
                     <Card className="border-0 shadow-sm h-100" style={{ borderRadius: '12px' }}>
                       <Card.Body className="p-4">
-                        <h5 className="fw-bold mb-4 text-success d-flex align-items-center">
+                        <h3 className="fw-bold mb-4 text-success d-flex align-items-center">
                           <GeoAlt size={20} className="me-2" />
                           Getting There
-                        </h5>
+                        </h3>
                         
                         <div className="mb-4">
                           <div className="d-flex align-items-start mb-3">
@@ -512,7 +512,7 @@ const AttractionDetailModal = ({ attraction, onClose, onAddToItinerary, isInItin
               <Tab.Pane eventKey="reviews">
                 <div className="mb-4">
                   <div className="d-flex align-items-center justify-content-between mb-4">
-                    <h5 className="fw-bold text-dark mb-0">Visitor Reviews</h5>
+                    <h4 className="fw-bold text-dark mb-0">Visitor Reviews</h4>
                     <div className="d-flex align-items-center">
                       <RatingDisplay rating={parseFloat(averageRating)} size={18} />
                       <span className="ms-3 text-muted">

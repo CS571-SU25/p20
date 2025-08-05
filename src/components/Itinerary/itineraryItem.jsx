@@ -88,9 +88,9 @@ const ItineraryItem = ({ attraction, index, onRemove, notes, onNotesChange }) =>
             <Col md={6}>
               <div className="h-100 d-flex flex-column justify-content-between">
                 <div>
-                  <h5 className="fw-bold text-dark mb-2 lh-sm">
+                  <h1 className="fw-bold text-dark mb-2 lh-sm">
                     {attraction.name}
-                  </h5>
+                  </h1>
                   
                   <div className="d-flex align-items-center text-muted mb-2 small">
                     <Clock size={14} className="me-2" />
